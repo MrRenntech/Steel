@@ -1,3 +1,5 @@
+import QtQuick 2.15
+
 QtObject {
     // Dynamic Profile
     property int breathe: 1000

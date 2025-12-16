@@ -11,6 +11,7 @@ Item {
     
     // Internal Animation Properties
     property color visualColor: theme.secondaryColor
+    signal clicked()
     
     property real visualScale: 1.0
     Behavior on visualScale { 
@@ -29,9 +30,36 @@ Item {
         width: 120
         height: 120
         radius: width/2
-        color: root.visualColor
-        border.color: theme.primaryColor
-        border.width: 2
+        color: theme.useGradient ? "transparent" : root.visualColor
+        border.color: Qt.rgba(1, 1, 1, 0.25)
+        border.width: 1
+        
+        // Outer Glow (Energy without noise)
+        Rectangle {
+            anchors.centerIn: parent
+            width: parent.width + 16
+            height: parent.height + 16
+            radius: width / 2
+            color: "transparent"
+            border.width: 1
+            border.color: Qt.rgba(
+                theme.accentColor.r,
+                theme.accentColor.g,
+                theme.accentColor.b,
+                root.assistantState === "LISTENING" ? 0.6 : 0.15
+            )
+        }
+
+        // Premium Orb Gradient (Physical Sphere Simulation)
+        // Lighter top (1.35x), Darker bottom (1.4x)
+        gradient: theme.useGradient ? gradientObj : null
+        
+        Gradient {
+            id: gradientObj
+            GradientStop { position: 0.0; color: Qt.lighter(root.visualColor, 1.35) } // High key light
+            GradientStop { position: 0.6; color: root.visualColor }                   // Midtone
+            GradientStop { position: 1.0; color: Qt.darker(root.visualColor, 1.4) }   // Shadow
+        }
         
         // Unified Scale Pipeline: Base (State) * Modulation (Animation)
         property real modulationScale: 1.0
@@ -52,8 +80,8 @@ Item {
         rotation: root.visualRotation
         
         // Smooth transitions for STATE properties
-        Behavior on color { ColorAnimation { duration: theme.motion.respond } }
-        Behavior on rotation { NumberAnimation { duration: theme.motion.attend; easing.type: theme.motion.easingSoft } }
+        Behavior on color { ColorAnimation { duration: theme.motion ? theme.motion.respond : 300 } }
+        Behavior on rotation { NumberAnimation { duration: theme.motion ? theme.motion.attend : 600; easing.type: theme.motion ? theme.motion.easingSoft : Easing.InOutQuad } }
         
         // --- ANIMATIONS (Targeting modulationScale only) ---
         
@@ -71,7 +99,7 @@ Item {
             id: animAttend
             running: false
             loops: Animation.Infinite
-            NumberAnimation { to: 1.12; duration: root.currentDuration; easing.type: theme.motion.easingFocus }
+            NumberAnimation { to: 1.12; duration: root.currentDuration; easing.type: theme.motion ? theme.motion.easingFocus : Easing.OutSine }
             NumberAnimation { to: 1.0; duration: root.currentDuration; easing.type: Easing.InSine }
         }
         
@@ -80,7 +108,7 @@ Item {
             id: animRespond
             running: false
             loops: Animation.Infinite
-            NumberAnimation { to: 0.92; duration: root.currentDuration; easing.type: theme.motion.easingFocus }
+            NumberAnimation { to: 0.92; duration: root.currentDuration; easing.type: theme.motion ? theme.motion.easingFocus : Easing.OutSine }
             NumberAnimation { to: 1.0; duration: root.currentDuration; easing.type: Easing.InSine }
         }
         
@@ -93,6 +121,13 @@ Item {
             NumberAnimation { to: 0.98; duration: root.currentDuration; easing.type: Easing.InOutSine }
         }
 
+        // Intent Signal
+        MouseArea {
+            anchors.fill: parent
+            // No visual affordance (cursorShape default)
+            onClicked: root.clicked()
+        }
+
         // THINKING: Rotation (Targeting parent rotation property directly via state, logic separate)
         RotationAnimation on rotation {
             id: animRotate
@@ -100,7 +135,7 @@ Item {
             loops: Animation.Infinite
             from: 0; to: 360
             duration: root.currentDuration
-            easing.type: theme.motion.easingFocus
+            easing.type: theme.motion ? theme.motion.easingFocus : Easing.InOutQuad
         }
     }
     
@@ -109,7 +144,7 @@ Item {
         State {
             name: "IDLE"
             when: root.assistantState === "IDLE"
-            PropertyChanges { target: root; visualColor: theme.secondaryColor; currentDuration: theme.motion.breathe }
+            PropertyChanges { target: root; visualColor: theme.secondaryColor; currentDuration: theme.motion ? theme.motion.breathe : 2000 }
             PropertyChanges { target: core; modulationScale: 1.0 }
             PropertyChanges { target: animBreathe; running: true }
             PropertyChanges { target: animAttend; running: false }
@@ -120,7 +155,7 @@ Item {
         State {
             name: "LISTENING"
             when: root.assistantState === "LISTENING"
-            PropertyChanges { target: root; visualColor: theme.colorSuccess; currentDuration: theme.motion.attend }
+            PropertyChanges { target: root; visualColor: theme.colorSuccess; currentDuration: theme.motion ? theme.motion.attend : 600 }
             PropertyChanges { target: animBreathe; running: false }
             PropertyChanges { target: animAttend; running: true }
             PropertyChanges { target: animRespond; running: false }
@@ -130,7 +165,7 @@ Item {
         State {
             name: "THINKING"
             when: root.assistantState === "THINKING"
-            PropertyChanges { target: root; visualColor: theme.colorWarning; currentDuration: theme.motion.think }
+            PropertyChanges { target: root; visualColor: theme.colorWarning; currentDuration: theme.motion ? theme.motion.think : 1000 }
             PropertyChanges { target: core; modulationScale: 1.0 }
             PropertyChanges { target: animBreathe; running: true } 
             PropertyChanges { target: animAttend; running: false }
@@ -141,7 +176,7 @@ Item {
         State {
             name: "RESPONDING"
             when: root.assistantState === "RESPONDING"
-            PropertyChanges { target: root; visualColor: theme.primaryColor; currentDuration: theme.motion.respond }
+            PropertyChanges { target: root; visualColor: theme.primaryColor; currentDuration: theme.motion ? theme.motion.respond : 300 }
             PropertyChanges { target: animBreathe; running: false }
             PropertyChanges { target: animAttend; running: false }
             PropertyChanges { target: animRespond; running: true }
@@ -151,7 +186,7 @@ Item {
         State {
             name: "ERROR"
             when: root.assistantState === "ERROR"
-            PropertyChanges { target: root; visualColor: theme.colorError; currentDuration: theme.motion.error }
+            PropertyChanges { target: root; visualColor: theme.colorError; currentDuration: theme.motion ? theme.motion.error : 1000 }
             PropertyChanges { target: animBreathe; running: false }
             PropertyChanges { target: animAttend; running: false }
             PropertyChanges { target: animRespond; running: false }

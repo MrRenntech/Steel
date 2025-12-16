@@ -1,3 +1,5 @@
+import QtQuick 2.15
+
 QtObject {
     // Calm Profile
     property int breathe: 2000

@@ -2,27 +2,50 @@ import QtQuick 2.15
 import "../../motion"
 
 QtObject {
-    // BMW Test Theme
-    property string backgroundImage: "../../assets/ui/bmw_dashboard.png"
+    // BMW Visual Language
+    // "Engineering Confidence"
+    
+    // Background: Near-black with blue-gray hint (Graphite Blue)
+    // Concept: "Lit from above" - creates vertical depth
+    property string backgroundImage: ""
+    property var backgroundGradient: null 
+    property color backgroundColor: "#0E141B" // BMW Graphite Blue
 
-    property color backgroundColor: "#001133" // Deep Blue
-    property color primaryColor: "#0066B1"
-    property color secondaryColor: "#003366"
-    property color accentColor: "#FFFFFF"
+    // Colors
+    // Primary: Soft White (#EAF2F8) for readability
+    // Secondary: Dark Slate (#1A222C) for surfaces
+    // Accent: iDrive Blue (#6FAED9) for technical highlights
     property color textColor: "#FFFFFF"
     
-    property color colorSuccess: "#0066B1" // BMW Blue
-    property color colorWarning: "#F59C1A" // Warning Orange
-    property color colorError: "#D90022"   // Error Red
+    // Semantic Colors (Desaturated, Cold)
+    property color colorSuccess: "#4A7A68" // Cold Green
+    property color colorWarning: "#BF9E60" // Muted Gold
+    property color colorError: "#8C2F2F"   // Desaturated Red
 
-    property string fontFamily: "Arial"
-    property int fontSizeH1: 40
-    property int fontSizeH2: 28
-    property int fontSizeBody: 16
+    // Typography
+    property string fontFamily: "Segoe UI"
+    property int fontSizeH1: 32 // Calm sizing
+    property int fontSizeH2: 24
+    property int fontSizeBody: 14
     
-    property int radiusSmall: 2
-    property int radiusLarge: 8
-    property int padding: 20
+    // Geometry (Minimal borders, soft edges)
+    property int radiusSmall: 1
+    property int radiusLarge: 4
+    property int padding: 24 // Calm, deliberate spacing
     
-    property QtObject motion: Dynamic {}
+    // Motion
+    property QtObject motion: Calm {} // "Calm"
+    
+    // Gradient Support ("Premium Depth")
+    property bool useGradient: true
+    property color gradientStart: "#18202A"   // Top glow
+    property color gradientCenter: "#0E141B"  // Core graphite
+    property color gradientEnd: "#070B10"     // Bottom falloff
+    
+    // Orb Gradient (Subtle Radial Simulation)
+    property color orbGradientCenter: "#D8E6F3" // Lighter Center (Cool White-Blue)
+    property color orbGradientEdge: "#5A8BB0"   // Darker Edge (Muted Blue)
+
+    // Layout Structure
+    property bool showSidebar: true
 }

@@ -32,6 +32,17 @@ Item {
     
     property string backgroundImage: loader.item ? loader.item.backgroundImage : ""
     
+    // Gradient Proxies
+    property bool useGradient: loader.item ? loader.item.useGradient : false
+    property color gradientStart: loader.item ? loader.item.gradientStart : backgroundColor
+    property color gradientCenter: loader.item ? loader.item.gradientCenter : backgroundColor
+    property color gradientEnd: loader.item ? loader.item.gradientEnd : backgroundColor
+    
+    property color orbGradientCenter: loader.item ? loader.item.orbGradientCenter : primaryColor
+    property color orbGradientEdge: loader.item ? loader.item.orbGradientEdge : secondaryColor
+    
+    property bool showSidebar: loader.item ? loader.item.showSidebar : false
+    
     // Connection to Python state
     Connections {
         target: app
@@ -40,12 +51,13 @@ Item {
             // e.g. "base" -> "../../themes/base/Theme.qml"
             var t = app.currentTheme
             console.log("Loading theme: " + t)
-            loader.source = "../../themes/" + t + "/Theme.qml"
+            // Enforce BMW Theme
+            loader.source = "../../themes/bmw/Theme.qml"
         }
     }
 
     Loader {
         id: loader
-        source: "../../themes/base/Theme.qml" // Default
+        source: "../../themes/bmw/Theme.qml" // BMW only
     }
 }
