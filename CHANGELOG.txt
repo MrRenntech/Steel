@@ -1,0 +1,10 @@
+v5.3.0 (Final Polish)
+- [NEW] **Themes**: Added BMW, Audi, Chevy presets. Light/Dark variants included.
+- [NEW] **Memory**: Persistent local storage (`memory.json`) for long-term context.
+- [NEW] **FX**: Loading Splash Screen & Sound Effects.
+
+v5.1.0 (Customization)
+- [NEW] Theme Engine & Wallpaper Picker.
+
+v5.0.0 (Omni-Present)
+- [NEW] Vision (Camera/Screen), Vault, Windows Auth.
