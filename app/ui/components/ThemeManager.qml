@@ -85,13 +85,18 @@ QtObject {
             name: "BMW",
             description: "Soft, organic",
             
-            // Geometry
-            tileRadius: 20,
+            // Geometry (SOFT EDGES)
+            tileRadius: 18,
             tileBlur: 0.08,
             tileBorderOpacity: 0.15,
             tileShadowOpacity: 0.30,
             radiusPanel: 28,
             padding: 24,
+            
+            // Tile Interaction (ORGANIC)
+            tileHoverLift: 0,             // No lift, just glow
+            tilePressScale: 0.97,         // Soft press
+            tileBreathingEnabled: true,   // Subtle breathing
             
             // Colors
             accentColor: "#6FAED9",
@@ -104,7 +109,7 @@ QtObject {
             colorError: "#8C2F2F",
             backgroundContrast: 0.7,
             
-            // Glass
+            // Glass (DEEP)
             glassOpacity: 0.08,
             glassBorder: 0.15,
             glassShadow: 0.30,
@@ -115,19 +120,22 @@ QtObject {
             fontSizeH2: 24,
             fontSizeBody: 14,
             letterSpacing: 1.2,
+            textTransform: "none",
             
-            // Motion
+            // Motion (CALM)
             motionProfile: "calm",
             transitionFast: 200,
-            transitionNormal: 360,
+            transitionNormal: 420,
             transitionSlow: 600,
             easingType: Easing.OutCubic,
             
-            // Orb
+            // Orb (ORGANIC SOUL)
             orbStyle: "organic",
             useGeometricOrb: false,
             orbGlowIntensity: 0.3,
             orbPulseSpeed: 5000,
+            orbSegments: 0,               // No segments
+            orbRingGap: 0,
             
             // Gradients
             useGradient: true,
@@ -144,57 +152,65 @@ QtObject {
             name: "AUDI",
             description: "Sharp, technical",
             
-            // Geometry
+            // Geometry (HARD EDGES)
             tileRadius: 6,
-            tileBlur: 0.02,
-            tileBorderOpacity: 0.20,
-            tileShadowOpacity: 0.15,
-            radiusPanel: 10,
-            padding: 20,
+            tileBlur: 0.25,              // More blur contrast
+            tileBorderOpacity: 0.25,     // Stronger borders
+            tileShadowOpacity: 0.08,     // Minimal shadow
+            radiusPanel: 8,
+            padding: 18,
             
-            // Colors
-            accentColor: "#BB0A1E",
-            backgroundColor: "#0A0C0F",
+            // Tile Interaction
+            tileHoverLift: 3,            // Slight lift on hover
+            tilePressScale: 0.98,        // Instant press feedback
+            tileBreathingEnabled: false, // No organic breathing
+            
+            // Colors (HIGH CONTRAST)
+            accentColor: "#EAEAEA",      // Neutral white accent
+            backgroundColor: "#08090B",   // Deeper black
             primaryColor: "#FFFFFF",
-            secondaryColor: "#1C1E22",
+            secondaryColor: "#18191C",
             textColor: "#FFFFFF",
-            colorSuccess: "#00CC66",
-            colorWarning: "#FF9500",
-            colorError: "#FF3B30",
-            backgroundContrast: 0.85,
+            colorSuccess: "#00E676",
+            colorWarning: "#FF9100",
+            colorError: "#FF1744",
+            backgroundContrast: 1.15,    // Higher contrast
             
-            // Glass
-            glassOpacity: 0.04,
-            glassBorder: 0.20,
-            glassShadow: 0.12,
+            // Glass (FLAT)
+            glassOpacity: 0.03,
+            glassBorder: 0.25,
+            glassShadow: 0.08,
             
-            // Typography
+            // Typography (TIGHTER, DATA-DENSE)
             fontFamily: "Segoe UI",
-            fontSizeH1: 28,
-            fontSizeH2: 20,
-            fontSizeBody: 13,
-            letterSpacing: 0.8,
+            fontSizeH1: 26,
+            fontSizeH2: 18,
+            fontSizeBody: 12,
+            letterSpacing: 0.6,
+            textTransform: "uppercase",  // More uppercase
             
-            // Motion
+            // Motion (FAST, DIRECT)
             motionProfile: "sharp",
-            transitionFast: 120,
-            transitionNormal: 220,
-            transitionSlow: 350,
-            easingType: Easing.OutQuart,
+            transitionFast: 80,          // Very quick
+            transitionNormal: 180,       // Fast
+            transitionSlow: 280,
+            easingType: Easing.OutQuart, // Sharp deceleration
             
-            // Orb
+            // Orb (GEOMETRIC MACHINE)
             orbStyle: "geometric",
             useGeometricOrb: true,
-            orbGlowIntensity: 0.15,
-            orbPulseSpeed: 2500,
+            orbGlowIntensity: 0.08,      // Minimal glow
+            orbPulseSpeed: 1500,         // Faster pulse
+            orbSegments: 12,             // Radial tick count
+            orbRingGap: 4,               // Gap between rings
             
-            // Gradients
+            // Gradients (FLAT)
             useGradient: false,
-            gradientStart: "#12141A",
-            gradientCenter: "#0A0C0F",
-            gradientEnd: "#050608",
-            orbGradientCenter: "#E0E8F0",
-            orbGradientEdge: "#4080A0"
+            gradientStart: "#0A0B0D",
+            gradientCenter: "#08090B",
+            gradientEnd: "#040506",
+            orbGradientCenter: "#F0F0F0",
+            orbGradientEdge: "#808080"
         }
     })
     

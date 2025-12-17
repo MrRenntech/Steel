@@ -168,9 +168,40 @@ Item {
     }
 
     // ═══════════════════════════════════════════════════════
-    // INTERACTION
+    // INTERACTION (Theme-Aware)
     // ═══════════════════════════════════════════════════════
     
+    // Theme interaction properties
+    property real _hoverLift: theme && theme.themes[theme.activeThemeId].tileHoverLift !== undefined 
+        ? theme.themes[theme.activeThemeId].tileHoverLift : 0
+    property real _pressScale: theme && theme.themes[theme.activeThemeId].tilePressScale !== undefined 
+        ? theme.themes[theme.activeThemeId].tilePressScale : 0.97
+    property int _fastTransition: theme ? theme.transitionFast : 150
+    
+    // State tracking
+    property bool _hovered: false
+    property bool _pressed: false
+    
+    // Transform for hover lift
+    transform: Translate {
+        y: _hovered ? -_hoverLift : 0
+        Behavior on y { 
+            NumberAnimation { 
+                duration: _fastTransition; 
+                easing.type: theme ? theme.easingType : Easing.OutCubic 
+            } 
+        }
+    }
+    
+    // Scale for press
+    scale: _pressed ? _pressScale : 1.0
+    Behavior on scale { 
+        NumberAnimation { 
+            duration: _fastTransition * 0.5; 
+            easing.type: Easing.OutQuart 
+        } 
+    }
+
     states: State {
         name: "active"
         when: root.highlighted
@@ -178,7 +209,7 @@ Item {
     }
 
     transitions: Transition {
-        NumberAnimation { properties: "scale"; duration: 200; easing.type: Easing.OutCubic }
+        NumberAnimation { properties: "scale"; duration: _transition; easing.type: Easing.OutCubic }
     }
 
     MouseArea {
@@ -187,17 +218,22 @@ Item {
         cursorShape: Qt.PointingHandCursor
 
         onEntered: {
-            root.y -= 4 * root.uiScale
-            glassPanel.color = Qt.rgba(1, 1, 1, 0.14)
+            _hovered = true
+            // Audi: just lift. BMW: glow brighter.
+            if (_hoverLift === 0) {
+                glassPanel.color = Qt.rgba(1, 1, 1, _glassOpacity + 0.06)
+            } else {
+                glassPanel.color = Qt.rgba(1, 1, 1, _glassOpacity + 0.02)
+            }
+            glassPanel.border.color = Qt.rgba(1, 1, 1, _borderOpacity + 0.15)
         }
         onExited: {
-            root.y += 4 * root.uiScale
-            glassPanel.color = Qt.rgba(1, 1, 1, highlighted ? 0.12 : 0.08)
+            _hovered = false
+            glassPanel.color = Qt.rgba(1, 1, 1, highlighted ? _glassOpacity + 0.04 : _glassOpacity)
+            glassPanel.border.color = Qt.rgba(1, 1, 1, highlighted ? _borderOpacity + 0.2 : _borderOpacity)
         }
-        onPressed: root.scale = 0.98
-        onReleased: root.scale = 1.0
+        onPressed: _pressed = true
+        onReleased: _pressed = false
         onClicked: root.clicked()
     }
-    
-    Behavior on y { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
 }

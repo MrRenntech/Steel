@@ -36,28 +36,35 @@ Item {
         NumberAnimation { to: 0; duration: 4500; easing.type: Easing.InOutSine }
     }
 
+    // Theme helpers
+    property bool isGeometric: theme && theme.useGeometricOrb
+    property int orbSegments: theme && theme.themes[theme.activeThemeId].orbSegments !== undefined 
+        ? theme.themes[theme.activeThemeId].orbSegments : 0
+    property real orbGlowIntensity: theme ? theme.orbGlowIntensity : 0.3
+
     // ═══════════════════════════════════════════════════════
     // LAYER 1: AMBIENT GLOW (Outermost - state colored)
+    // Organic: soft breathing. Geometric: static, minimal.
     // ═══════════════════════════════════════════════════════
     Rectangle {
         id: ambientGlow
         anchors.centerIn: orb
-        anchors.verticalCenterOffset: idle ? driftOffset : 0
-        width: orb.width + 60
+        anchors.verticalCenterOffset: idle && !isGeometric ? driftOffset : 0
+        width: orb.width + (isGeometric ? 40 : 60)
         height: width
         radius: width / 2
         
-        color: listening ? Qt.rgba(0.3, 0.9, 1.0, 0.08)
-             : thinking ? Qt.rgba(1.0, 0.8, 0.3, 0.08)
-             : responding ? Qt.rgba(0.3, 1.0, 0.5, 0.08)
-             : Qt.rgba(0.6, 0.8, 1.0, 0.04)
+        color: listening ? Qt.rgba(0.3, 0.9, 1.0, orbGlowIntensity * 0.3)
+             : thinking ? Qt.rgba(1.0, 0.8, 0.3, orbGlowIntensity * 0.3)
+             : responding ? Qt.rgba(0.3, 1.0, 0.5, orbGlowIntensity * 0.3)
+             : Qt.rgba(0.6, 0.8, 1.0, orbGlowIntensity * 0.15)
         
-        Behavior on color { ColorAnimation { duration: 800 } }
+        Behavior on color { ColorAnimation { duration: isGeometric ? 200 : 800 } }
         
-        // Breathing (IDLE only)
+        // Breathing (IDLE only, ORGANIC only)
         SequentialAnimation on scale {
             loops: Animation.Infinite
-            running: idle
+            running: idle && !isGeometric
             NumberAnimation { to: 1.05; duration: 5000; easing.type: Easing.InOutSine }
             NumberAnimation { to: 0.95; duration: 5000; easing.type: Easing.InOutSine }
         }
@@ -65,9 +72,33 @@ Item {
         // Pulse outward (RESPONDING)
         SequentialAnimation on scale {
             loops: Animation.Infinite
-            running: responding
+            running: responding && !isGeometric
             NumberAnimation { to: 1.15; duration: 600; easing.type: Easing.OutQuad }
             NumberAnimation { to: 1.0; duration: 1200; easing.type: Easing.InOutSine }
+        }
+    }
+    
+    // ═══════════════════════════════════════════════════════
+    // GEOMETRIC OVERLAY: RADIAL TICKS (Audi only)
+    // ═══════════════════════════════════════════════════════
+    Repeater {
+        model: isGeometric ? orbSegments : 0
+        
+        Rectangle {
+            property real angle: (index / orbSegments) * 360
+            
+            width: 2
+            height: listening ? 16 : 10
+            radius: 1
+            color: listening ? Qt.rgba(0.9, 0.9, 0.9, 0.8)
+                 : Qt.rgba(0.7, 0.7, 0.7, 0.4)
+            
+            x: orb.x + orb.width/2 + Math.cos(angle * Math.PI / 180) * (orb.width/2 + 20) - width/2
+            y: orb.y + orb.height/2 + Math.sin(angle * Math.PI / 180) * (orb.height/2 + 20) - height/2
+            rotation: angle + 90
+            
+            Behavior on height { NumberAnimation { duration: 100 } }
+            Behavior on color { ColorAnimation { duration: 150 } }
         }
     }
 
