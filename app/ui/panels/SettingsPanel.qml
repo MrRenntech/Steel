@@ -10,6 +10,9 @@ Item {
     
     // Active section
     property string activeSection: "appearance"
+    
+    // Navigation signal
+    signal navigateTo(string tab)
 
     // ═══════════════════════════════════════════════════════
     // SETTINGS PANEL - Premium Nested Layout
@@ -35,6 +38,46 @@ Item {
                 anchors.fill: parent
                 anchors.margins: 12
                 spacing: 4
+                
+                // Back button
+                Rectangle {
+                    width: parent.width
+                    height: 40
+                    radius: 8
+                    color: Qt.rgba(1, 1, 1, 0.08)
+                    border.color: Qt.rgba(1, 1, 1, 0.15)
+                    
+                    Row {
+                        anchors.fill: parent
+                        anchors.leftMargin: 12
+                        spacing: 8
+                        
+                        Text {
+                            text: "←"
+                            font.pixelSize: 16
+                            color: Qt.rgba(1, 1, 1, 0.8)
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        
+                        Text {
+                            text: "Back to Home"
+                            font.pixelSize: 12
+                            font.weight: Font.Medium
+                            color: Qt.rgba(1, 1, 1, 0.8)
+                            font.family: theme ? theme.fontFamily : "Segoe UI"
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+                    
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.navigateTo("HOME")
+                    }
+                }
+                
+                // Spacer
+                Item { width: 1; height: 8 }
                 
                 // Section header
                 Text {
@@ -218,7 +261,10 @@ Item {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: if(theme) theme.setTheme("bmw")
+                            onClicked: {
+                                console.log("Switching to BMW theme")
+                                if(root.theme) root.theme.setTheme("bmw")
+                            }
                         }
                     }
                     
@@ -258,7 +304,10 @@ Item {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: if(theme) theme.setTheme("audi")
+                            onClicked: {
+                                console.log("Switching to Audi theme")
+                                if(root.theme) root.theme.setTheme("audi")
+                            }
                         }
                     }
                 }

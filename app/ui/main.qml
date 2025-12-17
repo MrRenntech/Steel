@@ -12,7 +12,7 @@ Window {
     visible: true
     title: "Steel v6.4 Refactored"
     color: "black"
-    property string activeTab: "CORE"
+    property string activeTab: "HOME"
     property alias appTheme: theme
 
     // Theme Engine
@@ -74,11 +74,14 @@ Window {
         Row {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: 160 // Shift tabs right
+            anchors.leftMargin: 160
             spacing: 42
 
+            // ═══════════════════════════════════════════════════════
+            // NAVIGATION MODEL (Single Source of Truth)
+            // ═══════════════════════════════════════════════════════
             Repeater {
-                model: ["CORE", "INPUT", "SYSTEM", "NETWORK", "SETTINGS"]
+                model: ["HOME", "ASSISTANT", "SYSTEM", "NETWORK", "SETTINGS"]
 
                 delegate: Item {
                     property bool active: root.activeTab === modelData
@@ -186,9 +189,11 @@ Window {
             color: "transparent"
 
             TabContainer {
+                id: tabContainer
                 anchors.fill: parent
                 activeTab: root.activeTab
                 theme: theme
+                onRequestNavigation: function(tab) { root.activeTab = tab }
             }
         }
 

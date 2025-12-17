@@ -2,71 +2,95 @@ import QtQuick 2.15
 import "../../motion"
 
 QtObject {
-    // AUDI Visual Language
+    // ═══════════════════════════════════════════════════════
+    // AUDI THEME
     // "Progressive Technology"
     // Sharp geometry, flat depth, technical precision
+    // Inspired by audiusa.com
+    // ═══════════════════════════════════════════════════════
     
     // Identity
     property string themeName: "audi"
     
-    // Background: Pure dark with subtle warmth
-    property string backgroundImage: ""
-    property var backgroundGradient: null 
-    property color backgroundColor: "#0A0C0F" // Near-black, warmer than BMW
-
-    // Colors
-    // Primary: Pure White for maximum contrast
+    // ─────────────────────────────────────────────────────
+    // THEME CONTRACT (Required Properties)
+    // ─────────────────────────────────────────────────────
+    
+    // Tile Geometry (SHARP - key differentiator)
+    property int tileRadius: 6           // Almost rectangular
+    property real tileBlur: 0.02         // Minimal blur
+    property real tileBorderOpacity: 0.20 // Stronger borders
+    property real tileShadowOpacity: 0.15 // Less shadow
+    
+    // Background
+    property real backgroundContrast: 0.85
+    property color backgroundColor: "#0A0C0F"
+    
+    // Motion Profile (FAST - key differentiator)
+    property string motionProfile: "sharp"
+    property int transitionFast: 120      // Quick snaps
+    property int transitionNormal: 220    // Crisp
+    property int transitionSlow: 350      // Still faster than BMW
+    property int easingType: Easing.OutQuart  // Sharper curve
+    
+    // Orb Style (GEOMETRIC - key differentiator)
+    property string orbStyle: "geometric"  // Ticks, arcs, lines
+    property bool useGeometricOrb: true
+    property real orbGlowIntensity: 0.15   // Less glow
+    property real orbPulseSpeed: 2500      // Faster pulse (ms)
+    
+    // ─────────────────────────────────────────────────────
+    // COLORS (Higher contrast)
+    // ─────────────────────────────────────────────────────
     property color primaryColor: "#FFFFFF"
-    // Secondary: Cool Slate
     property color secondaryColor: "#1C1E22"
-    // Accent: Audi Red (used sparingly)
-    property color accentColor: "#BB0A1E"
+    property color accentColor: "#BB0A1E"    // Audi Red
     property color textColor: "#FFFFFF"
     
-    // Semantic Colors (Higher contrast than BMW)
-    property color colorSuccess: "#00CC66" // Brighter green
-    property color colorWarning: "#FF9500" // Audi orange
-    property color colorError: "#FF3B30"   // Vivid red
+    property color colorSuccess: "#00CC66"   // Brighter green
+    property color colorWarning: "#FF9500"   // Audi orange
+    property color colorError: "#FF3B30"     // Vivid red
 
-    // Typography (Tighter, more technical)
+    // ─────────────────────────────────────────────────────
+    // TYPOGRAPHY (Tighter, more technical)
+    // ─────────────────────────────────────────────────────
     property string fontFamily: "Segoe UI"
-    property int fontSizeH1: 28 // Smaller, more data density
+    property int fontSizeH1: 28              // Smaller
     property int fontSizeH2: 20
     property int fontSizeBody: 13
-    property real letterSpacing: 0.8 // Tighter than BMW
+    property real letterSpacing: 0.8         // Tighter
     
-    // Geometry (SHARP - key difference from BMW)
-    property int radiusSmall: 4   // Very subtle rounding
-    property int radiusLarge: 8   // Almost rectangular
-    property int radiusTile: 6    // Sharp tiles
-    property int radiusPanel: 10  // Sharp panels
-    property int padding: 20      // Tighter spacing
-    
-    // Glass Properties (Flatter, less blur)
-    property real glassOpacity: 0.04      // More transparent
-    property real glassBorder: 0.12       // Thinner borders
-    property real glassShadow: 0.15       // Less shadow
+    // ─────────────────────────────────────────────────────
+    // GLASS PROPERTIES (Flatter)
+    // ─────────────────────────────────────────────────────
+    property real glassOpacity: 0.04         // More transparent
+    property real glassBorder: 0.20          // Stronger borders
+    property real glassShadow: 0.12          // Less shadow
 
-    // Motion (Faster, sharper)
-    property QtObject motion: Calm {} // Using same base, but faster durations
-    property int transitionFast: 150    // Quick snaps
-    property int transitionNormal: 250  // Crisp transitions
-    property int transitionSlow: 400    // Still faster than BMW
-    property int easingType: Easing.OutQuart // Sharper deceleration
+    // ─────────────────────────────────────────────────────
+    // LAYOUT
+    // ─────────────────────────────────────────────────────
+    property int radiusSmall: 4
+    property int radiusLarge: 8
+    property int radiusTile: 6               // Sharp
+    property int radiusPanel: 10             // Sharp
+    property int padding: 20                 // Tighter
     
-    // Gradient Support (Minimal, flat)
-    property bool useGradient: false    // Flatter look
+    // ─────────────────────────────────────────────────────
+    // GRADIENTS (Minimal, flat)
+    // ─────────────────────────────────────────────────────
+    property bool useGradient: false         // Flat look
     property color gradientStart: "#12141A"
     property color gradientCenter: "#0A0C0F"
     property color gradientEnd: "#050608"
     
-    // Orb Gradient (Same AI identity, but crisper)
     property color orbGradientCenter: "#E0E8F0"
     property color orbGradientEdge: "#4080A0"
 
-    // Layout Structure
-    property bool showSidebar: true
+    // ─────────────────────────────────────────────────────
+    // MOTION OBJECT
+    // ─────────────────────────────────────────────────────
+    property QtObject motion: Calm {}
     
-    // Audi-specific: Geometric orb effects
-    property bool useGeometricOrb: true // Enables tick marks, arcs instead of soft glow
+    property bool showSidebar: true
 }

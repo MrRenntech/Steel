@@ -3,16 +3,19 @@ import "../panels"
 
 Item {
     id: root
-    property string activeTab: "ASSISTANT"
+    property string activeTab: "HOME"
 
     width: parent.width
     height: parent.height
-    clip: true // Ensure sliding content doesn't bleed
+    clip: true
 
+    // ═══════════════════════════════════════════════════════
+    // NAVIGATION INDEX MAPPING
+    // ═══════════════════════════════════════════════════════
     function tabIndex(tab) {
         switch (tab) {
-        case "CORE": return 0
-        case "INPUT": return 1
+        case "HOME": return 0
+        case "ASSISTANT": return 1
         case "SYSTEM": return 2
         case "NETWORK": return 3
         case "SETTINGS": return 4
@@ -22,36 +25,62 @@ Item {
 
     property int index: tabIndex(activeTab)
 
-    // CONTENT STRIP
+    // ═══════════════════════════════════════════════════════
+    // CONTENT STRIP (Horizontal Panel Layout)
+    // ═══════════════════════════════════════════════════════
     Row {
         id: strip
         width: parent.width * 5
         height: parent.height
-        x: -parent.index * parent.width // Use parent width for sliding step
+        x: -parent.index * parent.width
 
         Behavior on x {
             NumberAnimation {
-                duration: 360
-                easing.type: Easing.OutCubic
+                duration: theme ? theme.transitionNormal : 360
+                easing.type: theme ? theme.easingType : Easing.OutCubic
             }
         }
 
-        // Panel instances
-        // Assume these components exist in ../panels
+        // Panel 0: HOME (Dashboard)
         AssistantPanel { 
+            id: homePanel
             width: root.width 
             height: root.height 
-            theme: root.theme // Fixed binding
-            // Safer to assume ThemeLoader is global or passed down.
-            // main.qml has `ThemeLoader { id: theme }`.
-            // We can reference it if TabContainer is child of Window?
-            // Or pass theme property to TabContainer.
+            theme: root.theme
+            onNavigateTo: function(tab) { root.requestNavigation(tab) }
         }
-        MediaPanel { width: root.width; height: root.height; theme: root.theme }
-        VehiclePanel { width: root.width; height: root.height; theme: root.theme }
-        NavPanel { width: root.width; height: root.height; theme: root.theme }
-        SettingsPanel { width: root.width; height: root.height; theme: root.theme }
+        
+        // Panel 1: ASSISTANT (AI Focus)
+        MediaPanel { 
+            width: root.width
+            height: root.height
+            theme: root.theme 
+        }
+        
+        // Panel 2: SYSTEM
+        VehiclePanel { 
+            width: root.width
+            height: root.height
+            theme: root.theme 
+        }
+        
+        // Panel 3: NETWORK
+        NavPanel { 
+            width: root.width
+            height: root.height
+            theme: root.theme 
+        }
+        
+        // Panel 4: SETTINGS
+        SettingsPanel { 
+            id: settingsPanel
+            width: root.width
+            height: root.height
+            theme: root.theme
+            onNavigateTo: function(tab) { root.requestNavigation(tab) }
+        }
     }
     
-    property var theme // Accept theme property
+    property var theme
+    signal requestNavigation(string tab)
 }

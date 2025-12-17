@@ -17,15 +17,23 @@ Item {
     property string icon: ""
     property real uiScale: 1.0
     property string intent: ""
-    property string statusHint: "" // Micro-content: subtle status label
+    property string statusHint: ""
+    property var theme: null  // Theme reference
     
     signal clicked()
+    
+    // Theme-aware values
+    property int _radius: theme ? theme.tileRadius : 20
+    property real _glassOpacity: theme ? theme.glassOpacity : 0.08
+    property real _borderOpacity: theme ? theme.tileBorderOpacity : 0.15
+    property real _shadowOpacity: theme ? theme.tileShadowOpacity : 0.30
+    property int _transition: theme ? theme.transitionNormal : 360
 
     // ═══════════════════════════════════════════════════════
-    // TRUE GLASS PANEL (Light frosted glass on dark canvas)
+    // TRUE GLASS PANEL (Theme-reactive)
     // ═══════════════════════════════════════════════════════
     
-    // Shadow layer (manual, no QtGraphicalEffects needed)
+    // Shadow layer
     Rectangle {
         id: shadowLayer
         anchors.fill: glassPanel
@@ -34,26 +42,27 @@ Item {
         anchors.rightMargin: -2
         anchors.bottomMargin: -8
         radius: glassPanel.radius + 4
-        color: Qt.rgba(0, 0, 0, 0.3)
+        color: Qt.rgba(0, 0, 0, _shadowOpacity)
         z: -1
     }
     
     Rectangle {
         id: glassPanel
         anchors.fill: parent
-        radius: 20
+        radius: _radius
         
-        // LIGHT GLASS (not dark rectangles)
-        color: Qt.rgba(1, 1, 1, highlighted ? 0.12 : 0.08)
+        // Glass color
+        color: Qt.rgba(1, 1, 1, highlighted ? _glassOpacity + 0.04 : _glassOpacity)
         
-        // Soft frosted border
+        // Border
         border.width: 1
         border.color: highlighted 
-            ? Qt.rgba(1, 1, 1, 0.35)
-            : Qt.rgba(1, 1, 1, 0.15)
+            ? Qt.rgba(1, 1, 1, _borderOpacity + 0.2)
+            : Qt.rgba(1, 1, 1, _borderOpacity)
         
-        Behavior on color { ColorAnimation { duration: 300 } }
-        Behavior on border.color { ColorAnimation { duration: 300 } }
+        Behavior on color { ColorAnimation { duration: _transition } }
+        Behavior on border.color { ColorAnimation { duration: _transition } }
+        Behavior on radius { NumberAnimation { duration: _transition } }
         
         // Inner light gradient (top-lit glass effect)
         Rectangle {
