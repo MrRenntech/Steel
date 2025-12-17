@@ -62,39 +62,43 @@ QtObject {
     // Current wallpaper properties
     property real wallpaperLuminance: wallpapers[activeWallpaperId] 
         ? wallpapers[activeWallpaperId].luminance : 0.25
-    property string wallpaperId: wallpapers[activeWallpaperId] 
-        ? wallpapers[activeWallpaperId].source : "ambient_sky.png"
     
-    // ─────────────────────────────────────────────────────
-    // GLOBAL TEXT TOKENS (System-Wide - No Hard-Coding)
-    // ─────────────────────────────────────────────────────
+    // Public alias for easy access
+    property alias wallpaperId: root.activeWallpaperId
     
-    // Text colors (adaptive to wallpaper luminance)
-    property color textPrimary: wallpaperLuminance > 0.6 
-        ? "#0A0A0A" : "#F4F6F8"
-    property color textSecondary: wallpaperLuminance > 0.6 
-        ? "#3A3A3A" : "#C7CCD3"
-    property color textMuted: wallpaperLuminance > 0.6 
-        ? "#5A5A5A" : "#9AA1AB"
+    property UiTokens uiTokens: UiTokens {}
+
+    // Text colors
+    property color textPrimary: uiTokens.textPrimary
+    property color textSecondary: uiTokens.textSecondary
+    property color textMuted: uiTokens.textMuted
     
-    // Aliases for backward compatibility
+    // Legacy mapping
     property color primaryText: textPrimary
     property color secondaryText: textSecondary
     
-    // Opacity levels (use these, not raw numbers)
-    property real opPrimary: 1.0
-    property real opSecondary: 0.75
-    property real opMuted: 0.55
+    // Opacity layers
+    property real opPrimary: uiTokens.opPrimary
+    property real opSecondary: uiTokens.opSecondary
+    property real opMuted: uiTokens.opMuted
+    property real readabilityOpacity: uiTokens.readabilityLayerOpacity
     
-    // Readability layer opacity (page-level backing)
-    property real readabilityOpacity: wallpaperLuminance > 0.6 ? 0.15 : 0.22
+    // Active Wallpaper Source
+    property string activeWallpaperSource: wallpapers[activeWallpaperId] 
+        ? wallpapers[activeWallpaperId].source : "ambient_sky.png"
+    
+    // ─────────────────────────────────────────────────────
+    // GLOBAL TEXT TOKENS (Now proxied via UiTokens)
+    // ─────────────────────────────────────────────────────
+    
+    // (Old hardcoded blocks removed - see UiTokens.qml)
     
     // ─────────────────────────────────────────────────────
     // FONT PROFILES (Theme-Level Identity)
     // ─────────────────────────────────────────────────────
-    property string fontBMW: "Inter, Segoe UI, sans-serif"
-    property string fontAudi: "Montserrat, Segoe UI, sans-serif"
-    property string fontBentley: "Playfair Display, Georgia, serif"
+    property string fontBMW: uiTokens.fontBMW
+    property string fontAudi: uiTokens.fontAudi
+    property string fontBentley: uiTokens.fontBentley
     
     // Active font (from current theme)
     property string activeFont: themes[activeThemeId].fontFamily
