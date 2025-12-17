@@ -1,6 +1,7 @@
 @echo off
 echo ============================================
 echo   STEEL OS - AI Assistant Launcher
+echo   Version: Phase 8 (Micro-States / 3D)
 echo ============================================
 echo.
 

@@ -15,6 +15,18 @@ Item {
     property string currentWallpaper: "ambient_sky.png"
     property color glowColor: "#6FAED9"
     property real glowStrength: 0.06
+    property bool assistantActive: assistantState !== "IDLE"
+
+    // ─────────────────────────────────────────────────────
+    // LAYER 6: FOCUS DIMMER (Simplification for Active Mode)
+    // ─────────────────────────────────────────────────────
+    Rectangle {
+        anchors.fill: parent
+        color: "#000000"
+        opacity: assistantActive ? 0.4 : 0.0 // Dim background substantially
+        z: 100
+        Behavior on opacity { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
+    }
 
     // ─────────────────────────────────────────────────────
     // LAYER 1: Ambient Image (Dynamic Wallpaper)
@@ -26,6 +38,11 @@ Item {
         fillMode: Image.PreserveAspectCrop
         smooth: true
         opacity: 0.85
+        
+        onStatusChanged: {
+            if (status === Image.Error) console.error("BackgroundField: Error loading " + source)
+            else if (status === Image.Ready) console.log("BackgroundField: Loaded " + source)
+        }
         
         // Very slow parallax drift (barely perceptible)
         SequentialAnimation on x {

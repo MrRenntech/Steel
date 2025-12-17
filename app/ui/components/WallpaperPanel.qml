@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import Theme 1.0
 
 // ═══════════════════════════════════════════════════════
 // WALLPAPER PANEL
@@ -11,9 +12,10 @@ Rectangle {
     anchors.fill: parent
     color: Qt.rgba(0, 0, 0, 0.7)
     opacity: 0
+
+    
     visible: opacity > 0
     
-    property var theme
     signal closed()
     
     // Show/hide with animation
@@ -82,7 +84,7 @@ Rectangle {
                         font.weight: Font.Medium
                         font.letterSpacing: 1.6
                         color: Qt.rgba(1, 1, 1, 0.5)
-                        font.family: theme ? theme.fontFamily : "Segoe UI"
+                        font.family: FontRegistry.current.name
                     }
                     
                     Text {
@@ -90,7 +92,7 @@ Rectangle {
                         font.pixelSize: 22
                         font.weight: Font.DemiBold
                         color: Qt.rgba(1, 1, 1, 0.9)
-                        font.family: theme ? theme.fontFamily : "Segoe UI"
+                        font.family: FontRegistry.current.name
                     }
                 }
                 
@@ -140,8 +142,8 @@ Rectangle {
                         anchors.margins: 8
                         radius: 14
                         color: Qt.rgba(1, 1, 1, 0.06)
-                        border.width: app && app.currentWallpaper === model.source ? 2 : 1
-                        border.color: app && app.currentWallpaper === model.source 
+                        border.width: Theme.wallpapers[Theme.activeWallpaperId] && Theme.wallpapers[Theme.activeWallpaperId].source === model.source ? 2 : 1
+                        border.color: Theme.wallpapers[Theme.activeWallpaperId] && Theme.wallpapers[Theme.activeWallpaperId].source === model.source 
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.8) 
                             : Qt.rgba(1, 1, 1, 0.15)
                         clip: true
@@ -180,14 +182,14 @@ Rectangle {
                                 font.pixelSize: 12
                                 font.weight: Font.Medium
                                 color: Qt.rgba(1, 1, 1, 0.9)
-                                font.family: theme ? theme.fontFamily : "Segoe UI"
+                                font.family: FontRegistry.current.name
                             }
                             
                             Text {
                                 text: model.description
                                 font.pixelSize: 9
                                 color: Qt.rgba(1, 1, 1, 0.5)
-                                font.family: theme ? theme.fontFamily : "Segoe UI"
+                                font.family: FontRegistry.current.name
                             }
                         }
                         

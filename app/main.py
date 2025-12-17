@@ -31,6 +31,10 @@ if __name__ == "__main__":
 
     engine = QQmlApplicationEngine()
     
+    # Add UI modules path (Theme, etc.)
+    ui_modules_path = os.path.join(os.path.dirname(__file__), "ui")
+    engine.addImportPath(ui_modules_path)
+    
     # Expose to QML
     print("[DEBUG] Setting Context Property 'app'...")
     engine.rootContext().setContextProperty("app", app_state)

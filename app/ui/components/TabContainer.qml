@@ -25,28 +25,25 @@ Item {
 
     property int index: tabIndex(activeTab)
 
-    // ═══════════════════════════════════════════════════════
-    // CONTENT STRIP (Horizontal Panel Layout)
-    // ═══════════════════════════════════════════════════════
-    Row {
-        id: strip
-        width: parent.width * 5
-        height: parent.height
-        x: -parent.index * parent.width
+    
+    // Map tab names to index
+    property var tabIndex: {
+        "HOME": 0,
+        "ASSISTANT": 1,
+        "SYSTEM": 2,
+        "NETWORK": 3,
+        "SETTINGS": 4
+    }
 
-        Behavior on x {
-            NumberAnimation {
-                duration: theme ? theme.transitionNormal : 360
-                easing.type: theme ? theme.easingType : Easing.OutCubic
-            }
-        }
-
-        // Panel 0: HOME (Dashboard)
-        AssistantPanel { 
-            id: homePanel
-            width: root.width 
-            height: root.height 
-            theme: root.theme
+    StackLayout {
+        id: contentStack
+        anchors.fill: parent
+        currentIndex: tabIndex[activeTab] || 0
+        
+        // Panel 0: HOME (Simplified)
+        HomePanel { 
+            width: root.width
+            height: root.height
             onNavigateTo: function(tab) { root.requestNavigation(tab) }
         }
         
@@ -54,21 +51,18 @@ Item {
         MediaPanel { 
             width: root.width
             height: root.height
-            theme: root.theme 
         }
         
         // Panel 2: SYSTEM
         VehiclePanel { 
             width: root.width
             height: root.height
-            theme: root.theme 
         }
         
         // Panel 3: NETWORK
         NavPanel { 
             width: root.width
             height: root.height
-            theme: root.theme 
         }
         
         // Panel 4: SETTINGS
@@ -76,11 +70,9 @@ Item {
             id: settingsPanel
             width: root.width
             height: root.height
-            theme: root.theme
             onNavigateTo: function(tab) { root.requestNavigation(tab) }
         }
     }
     
-    property var theme
     signal requestNavigation(string tab)
 }

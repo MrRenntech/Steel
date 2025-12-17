@@ -1,5 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import Theme 1.0
+
 
 Item {
     id: root
@@ -18,20 +20,19 @@ Item {
     property real uiScale: 1.0
     property string intent: ""
     property string statusHint: ""
-    property var theme: null
     
     signal clicked()
     
-    // Theme-aware values
-    property int _radius: theme ? theme.tileRadius : 18
-    property real _glassOpacity: theme ? theme.glassOpacity : 0.08
-    property real _borderOpacity: theme ? theme.tileBorderOpacity : 0.15
-    property real _shadowOpacity: theme ? theme.tileShadowOpacity : 0.30
-    property int _transition: theme ? theme.transitionNormal : 360
+    // Theme-aware values (Single Source of Truth)
+    property int _radius: Theme.tileRadius
+    property real _glassOpacity: Theme.glassOpacity * 0.9 // Reduced by 10% for Phase 3 focus
+    property real _borderOpacity: Theme.tileBorderOpacity
+    property real _shadowOpacity: Theme.tileShadowOpacity
+    property int _transition: Theme.transitionNormal
     
-    // Text colors (from theme adaptive system)
-    property color _primaryText: theme ? theme.primaryText : "#F4F6F8"
-    property color _secondaryText: theme ? theme.secondaryText : "#C9CED6"
+    // Text colors (from Theme adaptive system)
+    property color _primaryText: Theme.textPrimary
+    property color _secondaryText: Theme.textSecondary
 
     // ═══════════════════════════════════════════════════════
     // GLASS PANEL WITH CONTRAST LAYER
@@ -56,7 +57,7 @@ Item {
         radius: _radius
         
         // CONTRAST LAYER - dark backing for text readability
-        color: Qt.rgba(0, 0, 0, 0.35)
+        color: Qt.rgba(0, 0, 0, Theme.tileBackingOpacity)
         
         // Glass overlay on top
         Rectangle {
@@ -128,13 +129,13 @@ Item {
         font.pixelSize: 9
         font.weight: Font.Medium
         font.letterSpacing: 0.8
-        color: theme ? theme.colorSuccess : "#4A7A68"
+        color: Theme.colorSuccess
         opacity: 0.9
         anchors.top: parent.top
         anchors.topMargin: 38
         anchors.right: parent.right
         anchors.rightMargin: 16
-        font.family: theme ? theme.fontFamily : "Segoe UI"
+        font.family: FontRegistry.current.name
     }
 
     // Main content column with TEXT HIERARCHY
@@ -153,7 +154,7 @@ Item {
             font.capitalization: Font.AllUppercase
             opacity: 0.65
             color: _secondaryText
-            font.family: theme ? theme.fontFamily : "Segoe UI"
+            font.family: FontRegistry.current.name
         }
 
         // TIER 2: Primary Value (MUST POP)
@@ -163,7 +164,7 @@ Item {
             font.weight: Font.DemiBold
             opacity: 1.0
             color: _primaryText
-            font.family: theme ? theme.fontFamily : "Segoe UI"
+            font.family: FontRegistry.current.name
             
             // Micro shadow for edge definition
             layer.enabled: true
@@ -179,7 +180,7 @@ Item {
             font.weight: Font.Normal
             opacity: 0.55
             color: _secondaryText
-            font.family: theme ? theme.fontFamily : "Segoe UI"
+            font.family: FontRegistry.current.name
             visible: root.subtitle !== ""
         }
     }
@@ -188,11 +189,11 @@ Item {
     // INTERACTION (Theme-Aware)
     // ═══════════════════════════════════════════════════════
     
-    property real _hoverLift: theme && theme.themes[theme.activeThemeId].tileHoverLift !== undefined 
-        ? theme.themes[theme.activeThemeId].tileHoverLift : 0
-    property real _pressScale: theme && theme.themes[theme.activeThemeId].tilePressScale !== undefined 
-        ? theme.themes[theme.activeThemeId].tilePressScale : 0.97
-    property int _fastTransition: theme ? theme.transitionFast : 150
+    property real _hoverLift: Theme.themes[Theme.activeThemeId].tileHoverLift !== undefined 
+        ? Theme.themes[Theme.activeThemeId].tileHoverLift : 0
+    property real _pressScale: Theme.themes[Theme.activeThemeId].tilePressScale !== undefined 
+        ? Theme.themes[Theme.activeThemeId].tilePressScale : 0.97
+    property int _fastTransition: Theme.transitionFast
     
     property bool _hovered: false
     property bool _pressed: false
@@ -201,8 +202,7 @@ Item {
         y: _hovered ? -_hoverLift : 0
         Behavior on y { 
             NumberAnimation { 
-                duration: _fastTransition; 
-                easing.type: theme ? theme.easingType : Easing.OutCubic 
+                easing.type: Theme.easingType 
             } 
         }
     }

@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
+import Theme 1.0
 
 Item {
     id: root
@@ -21,7 +22,7 @@ Item {
             Text {
                 text: "NOW PLAYING"
                 color: root.theme.accentColor
-                font.family: root.theme.fontFamily
+                font.family: FontRegistry.current.name
                 font.pixelSize: 16
                 Layout.alignment: Qt.AlignHCenter
             }
@@ -29,7 +30,7 @@ Item {
             Text {
                 text: "System Audio" 
                 color: root.theme.primaryColor
-                font.family: root.theme.fontFamily
+                font.family: FontRegistry.current.name
                 font.pixelSize: 32
                 font.bold: true
                 Layout.alignment: Qt.AlignHCenter

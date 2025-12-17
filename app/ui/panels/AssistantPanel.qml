@@ -1,12 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import "../components"
+import Theme 1.0
 
 Item {
     id: root
     width: parent ? parent.width : 500
     height: parent ? parent.height : 600
-    property var theme
     
     // Navigation signal
     signal navigateTo(string tab)
@@ -17,8 +17,8 @@ Item {
 
     GridLayout {
         anchors.fill: parent
-        anchors.leftMargin: theme ? theme.padding : 24
-        anchors.rightMargin: theme ? theme.padding : 24
+        anchors.leftMargin: Theme.padding
+        anchors.rightMargin: Theme.padding
         anchors.topMargin: 12
         anchors.bottomMargin: 12
         columns: 2
@@ -38,7 +38,6 @@ Item {
             statusHint: "RUNNING"
             icon: "../../assets/icons/settings.svg"
             uiScale: ui.scale
-            theme: root.theme
         }
 
         GlassTile {
@@ -51,7 +50,6 @@ Item {
             highlighted: app && app.assistantState === "LISTENING"
             icon: "../../assets/icons/mic.svg"
             uiScale: ui.scale
-            theme: root.theme
         }
 
         GlassTile {
@@ -63,7 +61,7 @@ Item {
             statusHint: "OK"
             icon: "../../assets/icons/vehicle.svg"
             uiScale: ui.scale
-            theme: root.theme
+
         }
 
         GlassTile {
@@ -75,7 +73,7 @@ Item {
             statusHint: "STABLE"
             icon: "../../assets/icons/nav.svg"
             uiScale: ui.scale
-            theme: root.theme
+
         }
 
         // ─────────────────────────────────────────────────────
@@ -92,7 +90,7 @@ Item {
             subtitle: (app && app.last_intent) ? "Processed successfully" : "Voice or keyboard ready"
             icon: "../../assets/icons/mic.svg"
             uiScale: ui.scale
-            theme: root.theme
+
         }
         
         GlassTile {
@@ -105,7 +103,7 @@ Item {
             subtitle: "No background operations"
             icon: "../../assets/icons/settings.svg"
             uiScale: ui.scale
-            theme: root.theme
+
         }
         
         GlassTile {
@@ -119,7 +117,7 @@ Item {
             statusHint: "CUSTOMIZE"
             icon: "../../assets/icons/settings.svg"
             uiScale: ui.scale
-            theme: root.theme
+
             
             onClicked: root.navigateTo("SETTINGS")
         }

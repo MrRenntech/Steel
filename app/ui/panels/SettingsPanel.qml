@@ -1,12 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import "../components"
+import Theme 1.0
+
 
 Item {
     id: root
     width: parent ? parent.width : 500
     height: parent ? parent.height : 600
-    property var theme
     
     // Active section
     property string activeSection: "appearance"
@@ -64,7 +65,7 @@ Item {
                             font.pixelSize: 12
                             font.weight: Font.Medium
                             color: Qt.rgba(1, 1, 1, 0.8)
-                            font.family: theme ? theme.fontFamily : "Segoe UI"
+                            font.family: FontRegistry.current.name
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -86,7 +87,7 @@ Item {
                     font.weight: Font.Medium
                     font.letterSpacing: 1.4
                     color: Qt.rgba(1, 1, 1, 0.4)
-                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                    font.family: FontRegistry.current.name
                     bottomPadding: 12
                 }
                 
@@ -125,7 +126,7 @@ Item {
                                 color: activeSection === modelData.id 
                                     ? Qt.rgba(1, 1, 1, 0.95)
                                     : Qt.rgba(1, 1, 1, 0.6)
-                                font.family: theme ? theme.fontFamily : "Segoe UI"
+                                font.family: FontRegistry.current.name
                                 anchors.verticalCenter: parent.verticalCenter
                             }
                         }
@@ -198,14 +199,14 @@ Item {
                     font.weight: Font.Medium
                     font.letterSpacing: 1.4
                     color: Qt.rgba(1, 1, 1, 0.4)
-                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                    font.family: FontRegistry.current.name
                 }
                 Text {
                     text: "Customize your environment"
                     font.pixelSize: 18
                     font.weight: Font.DemiBold
                     color: Qt.rgba(1, 1, 1, 0.9)
-                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                    font.family: FontRegistry.current.name
                 }
             }
             
@@ -219,7 +220,7 @@ Item {
                     font.pixelSize: 12
                     font.weight: Font.Medium
                     color: Qt.rgba(1, 1, 1, 0.7)
-                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                    font.family: FontRegistry.current.name
                 }
                 
                 Row {
@@ -230,11 +231,11 @@ Item {
                         width: 120
                         height: 80
                         radius: 12
-                        color: theme && theme.activeThemeId === "bmw" 
+                        color: Theme.activeThemeId === "bmw" 
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.15) 
                             : Qt.rgba(1, 1, 1, 0.06)
-                        border.width: theme && theme.activeThemeId === "bmw" ? 2 : 1
-                        border.color: theme && theme.activeThemeId === "bmw" 
+                        border.width: Theme.activeThemeId === "bmw" ? 2 : 1
+                        border.color: Theme.activeThemeId === "bmw" 
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.6)
                             : Qt.rgba(1, 1, 1, 0.15)
                         
@@ -247,37 +248,34 @@ Item {
                                 font.weight: Font.Medium
                                 color: Qt.rgba(1, 1, 1, 0.9)
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                font.family: theme ? theme.fontFamily : "Segoe UI"
+                                font.family: FontRegistry.current.name
                             }
                             Text {
                                 text: "Soft, organic"
-                                font.pixelSize: 10
+                                font.pixelSize: 9
                                 color: Qt.rgba(1, 1, 1, 0.5)
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                font.family: theme ? theme.fontFamily : "Segoe UI"
+                                font.family: FontRegistry.current.name
                             }
                         }
                         
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                console.log("Switching to BMW theme")
-                                if(root.theme) root.theme.setTheme("bmw")
-                            }
+                            onClicked: Theme.applyTheme("bmw")
                         }
                     }
-                    
-                    // Audi Theme option
+
+                    // AUDI Theme option
                     Rectangle {
                         width: 120
                         height: 80
                         radius: 12
-                        color: theme && theme.activeThemeId === "audi" 
+                        color: Theme.activeThemeId === "audi" 
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.15) 
                             : Qt.rgba(1, 1, 1, 0.06)
-                        border.width: theme && theme.activeThemeId === "audi" ? 2 : 1
-                        border.color: theme && theme.activeThemeId === "audi" 
+                        border.width: Theme.activeThemeId === "audi" ? 2 : 1
+                        border.color: Theme.activeThemeId === "audi" 
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.6)
                             : Qt.rgba(1, 1, 1, 0.15)
                         
@@ -290,37 +288,34 @@ Item {
                                 font.weight: Font.Medium
                                 color: Qt.rgba(1, 1, 1, 0.9)
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                font.family: theme ? theme.fontFamily : "Segoe UI"
+                                font.family: FontRegistry.current.name
                             }
                             Text {
                                 text: "Sharp, technical"
-                                font.pixelSize: 10
+                                font.pixelSize: 9
                                 color: Qt.rgba(1, 1, 1, 0.5)
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                font.family: theme ? theme.fontFamily : "Segoe UI"
+                                font.family: FontRegistry.current.name
                             }
                         }
                         
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                console.log("Switching to Audi theme")
-                                if(root.theme) root.theme.setTheme("audi")
-                            }
+                            onClicked: Theme.applyTheme("audi")
                         }
                     }
-                    
-                    // Bentley Theme option
+
+                    // BENTLEY Theme option
                     Rectangle {
                         width: 120
                         height: 80
                         radius: 12
-                        color: theme && theme.activeThemeId === "bentley" 
+                        color: Theme.activeThemeId === "bentley" 
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.15) 
                             : Qt.rgba(1, 1, 1, 0.06)
-                        border.width: theme && theme.activeThemeId === "bentley" ? 2 : 1
-                        border.color: theme && theme.activeThemeId === "bentley" 
+                        border.width: Theme.activeThemeId === "bentley" ? 2 : 1
+                        border.color: Theme.activeThemeId === "bentley" 
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.6)
                             : Qt.rgba(1, 1, 1, 0.15)
                         
@@ -333,24 +328,21 @@ Item {
                                 font.weight: Font.Medium
                                 color: Qt.rgba(1, 1, 1, 0.9)
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                font.family: theme ? theme.fontFamily : "Segoe UI"
+                                font.family: FontRegistry.current.name
                             }
                             Text {
                                 text: "Elegant, luxurious"
-                                font.pixelSize: 10
+                                font.pixelSize: 9
                                 color: Qt.rgba(1, 1, 1, 0.5)
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                font.family: theme ? theme.fontFamily : "Segoe UI"
+                                font.family: FontRegistry.current.name
                             }
                         }
                         
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                console.log("Switching to Bentley theme")
-                                if(root.theme) root.theme.setTheme("bentley")
-                            }
+                            onClicked: Theme.applyTheme("bentley")
                         }
                     }
                 }
@@ -366,87 +358,61 @@ Item {
                     font.pixelSize: 12
                     font.weight: Font.Medium
                     color: Qt.rgba(1, 1, 1, 0.7)
-                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                    font.family: FontRegistry.current.name
                 }
                 
-                GridView {
+                Flow {
                     width: parent.width
-                    height: 140
-                    cellWidth: 160
-                    cellHeight: 100
-                    clip: true
+                    spacing: 12
                     
-                    model: WallpaperModel {}
-                    
-                    delegate: Item {
-                        width: 152
-                        height: 92
+                    Repeater {
+                        model: [
+                            { name: "Ambient Sky", source: "ambient_sky.png", color: "#6FAED9" },
+                            { name: "Warm Dawn", source: "warm_dawn.png", color: "#E8A87C" },
+                            { name: "Glass Fog", source: "glass_fog.png", color: "#B0C4DE" },
+                            { name: "Soft Horizon", source: "soft_horizon.png", color: "#A8B0C0" }
+                        ]
                         
-                        Rectangle {
-                            anchors.fill: parent
-                            anchors.margins: 4
-                            radius: 10
-                            color: Qt.rgba(1, 1, 1, 0.06)
-                            border.width: app && app.currentWallpaper === model.source ? 2 : 1
-                            border.color: app && app.currentWallpaper === model.source 
-                                ? Qt.rgba(0.4, 0.9, 1.0, 0.8) 
-                                : Qt.rgba(1, 1, 1, 0.15)
-                            clip: true
+                        delegate: Rectangle {
+                            width: 140
+                            height: 80
+                            radius: 12
+                            color: "transparent"
+                            border.width: Theme.activeWallpaperId === modelData.name.toLowerCase().replace(" ", "_") ? 2 : 1
+                            border.color: Theme.activeWallpaperId === modelData.name.toLowerCase().replace(" ", "_") 
+                                ? Theme.accentColor 
+                                : Qt.rgba(1, 1, 1, 0.1)
                             
-                            Image {
-                                anchors.fill: parent
-                                anchors.margins: 1
-                                source: "../../assets/wallpapers/" + model.source
-                                fillMode: Image.PreserveAspectCrop
-                                opacity: 0.85
-                            }
-                            
-                            // Gradient overlay
+                            // Preview Image (Placeholder color for now)
                             Rectangle {
                                 anchors.fill: parent
-                                radius: parent.radius
+                                anchors.margins: 4
+                                radius: 8
+                                color: modelData.color
                                 gradient: Gradient {
-                                    GradientStop { position: 0.6; color: "transparent" }
-                                    GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.6) }
+                                    GradientStop { position: 0.0; color: modelData.color }
+                                    GradientStop { position: 1.0; color: Qt.darker(modelData.color, 1.5) }
                                 }
                             }
                             
                             // Label
                             Text {
-                                text: model.name
+                                text: modelData.name
                                 font.pixelSize: 10
                                 font.weight: Font.Medium
                                 color: Qt.rgba(1, 1, 1, 0.9)
                                 anchors.bottom: parent.bottom
                                 anchors.left: parent.left
                                 anchors.margins: 8
-                                font.family: theme ? theme.fontFamily : "Segoe UI"
-                            }
-                            
-                            // Selection indicator
-                            Rectangle {
-                                visible: app && app.currentWallpaper === model.source
-                                width: 18
-                                height: 18
-                                radius: 9
-                                color: Qt.rgba(0.4, 0.9, 1.0, 0.9)
-                                anchors.top: parent.top
-                                anchors.right: parent.right
-                                anchors.margins: 6
-                                
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "✓"
-                                    font.pixelSize: 10
-                                    font.weight: Font.Bold
-                                    color: Qt.rgba(0, 0, 0, 0.8)
-                                }
+                                font.family: FontRegistry.current.name
+                                style: Text.Outline
+                                styleColor: Qt.rgba(0,0,0,0.5)
                             }
                             
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: if(app) app.set_wallpaper(model.source)
+                                onClicked: Theme.setWallpaper(modelData.name.toLowerCase().replace(" ", "_"))
                             }
                         }
                     }
@@ -463,7 +429,7 @@ Item {
                     font.pixelSize: 12
                     font.weight: Font.Medium
                     color: Qt.rgba(1, 1, 1, 0.7)
-                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                    font.family: FontRegistry.current.name
                 }
                 
                 Row {
@@ -474,11 +440,11 @@ Item {
                         width: 100
                         height: 60
                         radius: 8
-                        color: theme && theme.fontFamily.indexOf("Inter") !== -1 
+                        color: Theme.activeThemeId === "bmw"
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.15) 
                             : Qt.rgba(1, 1, 1, 0.06)
-                        border.width: theme && theme.fontFamily.indexOf("Inter") !== -1 ? 2 : 1
-                        border.color: theme && theme.fontFamily.indexOf("Inter") !== -1 
+                        border.width: Theme.activeThemeId === "bmw" ? 2 : 1
+                        border.color: Theme.activeThemeId === "bmw"
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.6)
                             : Qt.rgba(1, 1, 1, 0.15)
                         
@@ -489,7 +455,7 @@ Item {
                                 text: "Inter"
                                 font.pixelSize: 14
                                 font.weight: Font.Medium
-                                font.family: "Inter, Segoe UI"
+                                font.family: FontRegistry.current.name
                                 color: Qt.rgba(1, 1, 1, 0.9)
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
@@ -504,7 +470,7 @@ Item {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: if(root.theme) root.theme.setTheme("bmw")
+                            onClicked: Theme.applyTheme("bmw")
                         }
                     }
                     
@@ -513,11 +479,11 @@ Item {
                         width: 100
                         height: 60
                         radius: 8
-                        color: theme && theme.fontFamily.indexOf("Montserrat") !== -1 
+                        color: Theme.activeThemeId === "audi"
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.15) 
                             : Qt.rgba(1, 1, 1, 0.06)
-                        border.width: theme && theme.fontFamily.indexOf("Montserrat") !== -1 ? 2 : 1
-                        border.color: theme && theme.fontFamily.indexOf("Montserrat") !== -1 
+                        border.width: Theme.activeThemeId === "audi" ? 2 : 1
+                        border.color: Theme.activeThemeId === "audi"
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.6)
                             : Qt.rgba(1, 1, 1, 0.15)
                         
@@ -528,7 +494,7 @@ Item {
                                 text: "Montserrat"
                                 font.pixelSize: 12
                                 font.weight: Font.Light
-                                font.family: "Montserrat, Segoe UI"
+                                font.family: FontRegistry.current.name
                                 color: Qt.rgba(1, 1, 1, 0.9)
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
@@ -543,7 +509,7 @@ Item {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: if(root.theme) root.theme.setTheme("audi")
+                            onClicked: Theme.applyTheme("audi")
                         }
                     }
 
@@ -552,11 +518,11 @@ Item {
                         width: 100
                         height: 60
                         radius: 8
-                        color: theme && theme.fontFamily.indexOf("Playfair") !== -1 
+                        color: Theme.activeThemeId === "bentley"
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.15) 
                             : Qt.rgba(1, 1, 1, 0.06)
-                        border.width: theme && theme.fontFamily.indexOf("Playfair") !== -1 ? 2 : 1
-                        border.color: theme && theme.fontFamily.indexOf("Playfair") !== -1 
+                        border.width: Theme.activeThemeId === "bentley" ? 2 : 1
+                        border.color: Theme.activeThemeId === "bentley"
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.6)
                             : Qt.rgba(1, 1, 1, 0.15)
                         
@@ -567,7 +533,7 @@ Item {
                                 text: "Playfair"
                                 font.pixelSize: 14
                                 font.weight: Font.Normal
-                                font.family: "Playfair Display, Georgia, serif"
+                                font.family: FontRegistry.current.name
                                 color: Qt.rgba(1, 1, 1, 0.9)
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
@@ -582,14 +548,14 @@ Item {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: if(root.theme) root.theme.setTheme("bentley")
+                            onClicked: Theme.applyTheme("bentley")
                         }
                     }
                 }
             }
         }
     }
-
+    
     // ═══════════════════════════════════════════════════════
     // AUDIO SECTION
     // ═══════════════════════════════════════════════════════
@@ -607,14 +573,14 @@ Item {
                     font.weight: Font.Medium
                     font.letterSpacing: 1.4
                     color: Qt.rgba(1, 1, 1, 0.4)
-                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                    font.family: FontRegistry.current.name
                 }
                 Text {
                     text: "Sound and voice settings"
                     font.pixelSize: 18
                     font.weight: Font.DemiBold
                     color: Qt.rgba(1, 1, 1, 0.9)
-                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                    font.family: FontRegistry.current.name
                 }
             }
             
@@ -622,7 +588,7 @@ Item {
                 text: "Audio settings coming soon"
                 font.pixelSize: 13
                 color: Qt.rgba(1, 1, 1, 0.5)
-                font.family: theme ? theme.fontFamily : "Segoe UI"
+                font.family: FontRegistry.current.name
             }
         }
     }
@@ -644,14 +610,14 @@ Item {
                     font.weight: Font.Medium
                     font.letterSpacing: 1.4
                     color: Qt.rgba(1, 1, 1, 0.4)
-                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                    font.family: FontRegistry.current.name
                 }
                 Text {
                     text: "Data and security"
                     font.pixelSize: 18
                     font.weight: Font.DemiBold
                     color: Qt.rgba(1, 1, 1, 0.9)
-                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                    font.family: FontRegistry.current.name
                 }
             }
             
@@ -659,7 +625,7 @@ Item {
                 text: "Privacy settings coming soon"
                 font.pixelSize: 13
                 color: Qt.rgba(1, 1, 1, 0.5)
-                font.family: theme ? theme.fontFamily : "Segoe UI"
+                font.family: FontRegistry.current.name
             }
         }
     }
@@ -681,14 +647,14 @@ Item {
                     font.weight: Font.Medium
                     font.letterSpacing: 1.4
                     color: Qt.rgba(1, 1, 1, 0.4)
-                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                    font.family: FontRegistry.current.name
                 }
                 Text {
                     text: "Steel OS"
                     font.pixelSize: 18
                     font.weight: Font.DemiBold
                     color: Qt.rgba(1, 1, 1, 0.9)
-                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                    font.family: FontRegistry.current.name
                 }
             }
             
@@ -701,7 +667,7 @@ Item {
                         text: "Version"
                         font.pixelSize: 12
                         color: Qt.rgba(1, 1, 1, 0.5)
-                        font.family: theme ? theme.fontFamily : "Segoe UI"
+                        font.family: FontRegistry.current.name
                         width: 100
                     }
                     Text {
@@ -709,7 +675,7 @@ Item {
                         font.pixelSize: 12
                         font.weight: Font.Medium
                         color: Qt.rgba(1, 1, 1, 0.9)
-                        font.family: theme ? theme.fontFamily : "Segoe UI"
+                        font.family: FontRegistry.current.name
                     }
                 }
                 
@@ -719,7 +685,7 @@ Item {
                         text: "AI Engine"
                         font.pixelSize: 12
                         color: Qt.rgba(1, 1, 1, 0.5)
-                        font.family: theme ? theme.fontFamily : "Segoe UI"
+                        font.family: FontRegistry.current.name
                         width: 100
                     }
                     Text {
@@ -727,7 +693,7 @@ Item {
                         font.pixelSize: 12
                         font.weight: Font.Medium
                         color: Qt.rgba(1, 1, 1, 0.9)
-                        font.family: theme ? theme.fontFamily : "Segoe UI"
+                        font.family: FontRegistry.current.name
                     }
                 }
                 
@@ -737,7 +703,7 @@ Item {
                         text: "Framework"
                         font.pixelSize: 12
                         color: Qt.rgba(1, 1, 1, 0.5)
-                        font.family: theme ? theme.fontFamily : "Segoe UI"
+                        font.family: FontRegistry.current.name
                         width: 100
                     }
                     Text {
@@ -745,7 +711,7 @@ Item {
                         font.pixelSize: 12
                         font.weight: Font.Medium
                         color: Qt.rgba(1, 1, 1, 0.9)
-                        font.family: theme ? theme.fontFamily : "Segoe UI"
+                        font.family: FontRegistry.current.name
                     }
                 }
             }

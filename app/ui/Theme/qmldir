@@ -1,0 +1,5 @@
+module Theme
+singleton Theme 1.0 Theme.qml
+
+singleton Typography 1.0 Typography.qml
+singleton FontRegistry 1.0 FontRegistry.qml

@@ -4,7 +4,9 @@ from .mic_monitor import MicMonitor
 
 class AssistantState(str, Enum):
     IDLE = "IDLE"
+    PRE_LISTEN = "PRE_LISTEN"
     LISTENING = "LISTENING"
+    HOLDING = "HOLDING"
     THINKING = "THINKING"
     RESPONDING = "RESPONDING"
     ERROR = "ERROR"
@@ -20,6 +22,10 @@ class AppState(QObject):
         self._last_intent = ""
         self._confidence = 0.0
         self._current_wallpaper = "ambient_sky.png"  # Default wallpaper
+        
+        # Audio Logic
+        self.silence_duration = 0.0
+        self.rms_threshold = 0.05
         
         # Mic Monitor
         self.mic = MicMonitor()
@@ -87,7 +93,9 @@ class AppState(QObject):
     @Slot()
     def request_listening(self):
         self.listeningImminent.emit()
-        QTimer.singleShot(150, lambda: self.set_state("LISTENING"))
+        # Manual trigger jumps to PRE_LISTEN
+        self.set_state("PRE_LISTEN")
+        self.silence_duration = 0.0
 
     @Slot(str, float)
     def set_intent(self, intent, confidence):
@@ -146,8 +154,47 @@ class AppState(QObject):
 
     def update_audio(self):
         # Smooth decay
-        self._audio_level *= 0.85
+        current_decay = self._audio_level * 0.85
+        
+        # Get Mic Level
+        mic_level = 0.0
         if hasattr(self, 'mic') and self.mic:
-            self._audio_level = max(self._audio_level, self.mic.level)
-
+            mic_level = self.mic.level
+            
+        self._audio_level = max(current_decay, mic_level)
         self.audioLevelChanged.emit()
+
+        # ─────────────────────────────────────────────────────────────
+        # LISTENING LOGIC (Micro-States)
+        # ─────────────────────────────────────────────────────────────
+        dt = 0.016 # 16ms
+        
+        # 1. IDLE -> PRE_LISTEN (Auto-Trigger)
+        if self._assistant_state == AssistantState.IDLE.value:
+            if mic_level > self.rms_threshold:
+                self.set_state("PRE_LISTEN")
+                self.silence_duration = 0.0
+
+        # 2. WATCHING (PRE_LISTEN / LISTENING / HOLDING)
+        elif self._assistant_state in [
+            AssistantState.PRE_LISTEN.value, 
+            AssistantState.LISTENING.value, 
+            AssistantState.HOLDING.value
+        ]:
+            if mic_level > self.rms_threshold:
+                # User is speaking
+                self.silence_duration = 0.0
+                if self._assistant_state != AssistantState.LISTENING.value:
+                    self.set_state("LISTENING")
+            else:
+                # Silence detected
+                self.silence_duration += dt
+                
+                # Check Timers
+                if self.silence_duration > 0.8 and self.silence_duration < 2.5:
+                    if self._assistant_state != AssistantState.HOLDING.value:
+                        self.set_state("HOLDING")
+                
+                elif self.silence_duration > 2.5:
+                    self.set_state("PROCESSING")
+                    # In a real app, this is where STT would finalize

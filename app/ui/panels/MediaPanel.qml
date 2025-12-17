@@ -1,13 +1,14 @@
 import QtQuick 2.15
+import Theme 1.0
+
 
 Item {
     id: root
-    property var theme
 
     // Readability layer - text never on raw wallpaper
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(0, 0, 0, theme ? theme.readabilityOpacity : 0.22)
+        color: Qt.rgba(0, 0, 0, Theme.readabilityOpacity)
         z: -1
     }
 
@@ -20,9 +21,9 @@ Item {
             font.pixelSize: 11
             font.weight: Font.Medium
             font.letterSpacing: 1.4
-            opacity: theme ? theme.opMuted : 0.55
-            color: theme ? theme.textMuted : "#9AA1AB"
-            font.family: theme ? theme.activeFont : "Segoe UI"
+            opacity: Theme.opMuted
+            color: Theme.textMuted
+            font.family: FontRegistry.current.name
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -31,9 +32,9 @@ Item {
             text: "MIC INPUT"
             font.pixelSize: 18
             font.weight: Font.Medium
-            opacity: theme ? theme.opSecondary : 0.75
-            color: theme ? theme.textSecondary : "#C7CCD3"
-            font.family: theme ? theme.activeFont : "Segoe UI"
+            opacity: Theme.opSecondary
+            color: Theme.textSecondary
+            font.family: FontRegistry.current.name
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -49,16 +50,16 @@ Item {
                 width: parent.width * (app ? app.audioLevel : 0)
                 height: parent.height
                 radius: 3
-                color: theme ? theme.colorSuccess : "#4A7A68"
+                color: Theme.colorSuccess
             }
         }
         
         Text {
             text: (app && app.audioLevel > 0.05) ? "Listening…" : "Idle"
             font.pixelSize: 13
-            opacity: theme ? theme.opMuted : 0.55
-            color: theme ? theme.textSecondary : "#C7CCD3"
-            font.family: theme ? theme.activeFont : "Segoe UI"
+            opacity: Theme.opMuted
+            color: Theme.textSecondary
+            font.family: FontRegistry.current.name
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }
