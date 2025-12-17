@@ -10,6 +10,13 @@ Item {
     
     signal navigateTo(string tab)
 
+    // Readability layer - text never on raw wallpaper
+    Rectangle {
+        anchors.fill: parent
+        color: Qt.rgba(0, 0, 0, theme ? theme.readabilityOpacity : 0.22)
+        z: -1
+    }
+
     // ═══════════════════════════════════════════════════════
     // HOME PANEL - Only 3 focused tiles
     // Primary focus: Status overview

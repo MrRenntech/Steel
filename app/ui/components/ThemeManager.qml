@@ -66,16 +66,38 @@ QtObject {
         ? wallpapers[activeWallpaperId].source : "ambient_sky.png"
     
     // ─────────────────────────────────────────────────────
-    // ADAPTIVE TEXT (cool, soft - never harsh white)
+    // GLOBAL TEXT TOKENS (System-Wide - No Hard-Coding)
     // ─────────────────────────────────────────────────────
-    property color primaryText: wallpaperLuminance > 0.6 
-        ? "#0A0A0A" : "#F4F6F8"   // Cool white, not harsh
-    property color secondaryText: wallpaperLuminance > 0.6 
-        ? "#444444" : "#C9CED6"   // Soft steel
-    property real textOpacityPrimary: wallpaperLuminance > 0.6 
-        ? 0.9 : 0.95
-    property real textOpacitySecondary: wallpaperLuminance > 0.6 
-        ? 0.6 : 0.55
+    
+    // Text colors (adaptive to wallpaper luminance)
+    property color textPrimary: wallpaperLuminance > 0.6 
+        ? "#0A0A0A" : "#F4F6F8"
+    property color textSecondary: wallpaperLuminance > 0.6 
+        ? "#3A3A3A" : "#C7CCD3"
+    property color textMuted: wallpaperLuminance > 0.6 
+        ? "#5A5A5A" : "#9AA1AB"
+    
+    // Aliases for backward compatibility
+    property color primaryText: textPrimary
+    property color secondaryText: textSecondary
+    
+    // Opacity levels (use these, not raw numbers)
+    property real opPrimary: 1.0
+    property real opSecondary: 0.75
+    property real opMuted: 0.55
+    
+    // Readability layer opacity (page-level backing)
+    property real readabilityOpacity: wallpaperLuminance > 0.6 ? 0.15 : 0.22
+    
+    // ─────────────────────────────────────────────────────
+    // FONT PROFILES (Theme-Level Identity)
+    // ─────────────────────────────────────────────────────
+    property string fontBMW: "Inter, Segoe UI, sans-serif"
+    property string fontAudi: "Montserrat, Segoe UI, sans-serif"
+    property string fontBentley: "Playfair Display, Georgia, serif"
+    
+    // Active font (from current theme)
+    property string activeFont: themes[activeThemeId].fontFamily
     
     // ─────────────────────────────────────────────────────
     // THEME CONTRACT (sacred - all themes must define these)
@@ -89,12 +111,15 @@ QtObject {
     property int radiusPanel: themes[activeThemeId].radiusPanel
     property int padding: themes[activeThemeId].padding
     
+    // Tile backing opacity (for contrast)
+    property real tileBackingOpacity: 0.35
+    
     // Colors (theme base, but text adapts to wallpaper)
     property color accentColor: themes[activeThemeId].accentColor
     property color backgroundColor: themes[activeThemeId].backgroundColor
-    property color primaryColor: primaryText  // ADAPTIVE
-    property color secondaryColor: secondaryText  // ADAPTIVE
-    property color textColor: primaryText  // ADAPTIVE
+    property color primaryColor: textPrimary
+    property color secondaryColor: textSecondary
+    property color textColor: textPrimary
     property color colorSuccess: themes[activeThemeId].colorSuccess
     property color colorWarning: themes[activeThemeId].colorWarning
     property color colorError: themes[activeThemeId].colorError
