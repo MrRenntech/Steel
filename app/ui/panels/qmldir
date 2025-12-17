@@ -1,0 +1,5 @@
+AssistantPanel AssistantPanel.qml
+MediaPanel MediaPanel.qml
+VehiclePanel VehiclePanel.qml
+NavPanel NavPanel.qml
+SettingsPanel SettingsPanel.qml

@@ -11,17 +11,30 @@ if __name__ == "__main__":
     app = QGuiApplication(sys.argv)
     
     # Init Logic
-    app_state = AppState()
+    print("[DEBUG] Initializing AppState...")
+    try:
+        app_state = AppState()
+        print(f"[DEBUG] AppState Initialized: {app_state}")
+    except Exception as e:
+        print(f"[DEBUG] AppState Init Failed: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
+
     system = SystemBridge()
     
     # Initialize Core Logic (State Machine)
+    print("[DEBUG] Initializing SteelCore...")
     from core.steel_core import SteelCore
     core = SteelCore(app_state)
+    print("[DEBUG] SteelCore Initialized")
 
     engine = QQmlApplicationEngine()
     
     # Expose to QML
+    print("[DEBUG] Setting Context Property 'app'...")
     engine.rootContext().setContextProperty("app", app_state)
+    print("[DEBUG] Context Property Set")
     engine.rootContext().setContextProperty("system", system)
     
     # Load QML

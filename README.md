@@ -1,37 +1,119 @@
-# STEEL OS | AI ASSISTANT (v5.7.0)
-*The Ultimate "Game Ready" Personal Assistant.*
+# STEEL OS | AI COMMAND CENTER (v6.5)
+*Premium Glass UI with Living AI Core*
+
+![Steel OS](app/assets/logo.png)
 
 ## 🌟 Overview
-Steel is a Python-based desktop assistant designed for power users, gamers, and developers. It blends a **Jarvis-like voice interface** with a **premium "Driver" dashboard** inspired by modern automotive and gaming software aesthetics.
+Steel is a Python-based desktop AI assistant featuring a **holographic glass UI** inspired by BMW iDrive, Apple Vision Pro, and Jarvis-style system interfaces. It combines powerful voice AI with a visually stunning, state-reactive dashboard.
 
-## 🚀 Key Features
-*   **🧠 Neural Core**: Powered by **Google Gemini 1.5**, remembering your hobbies and conversations (`memory.json`).
-*   **🏎️ "Driver" Dashboard**: Real-time CPU/RAM/Battery gauges with a sleek, card-based UI.
-*   **🛡️ Security Center**: 
-    *   **Crypt-Vault**: AES-256 encrypted password manager.
-    *   **VPN Tunneling**: Auto-interface for NordVPN, ExpressVPN, etc.
-*   **🎵 Media & News**: Global media keys (Spotify) and live Tech/Car news feeds.
-*   **👁️ Vision**: Analyze camera feeds or screen content ("What is on my screen?").
-*   **🎨 Customization**: Themes (Ferrari, Bentley, BMW, Neon) and AI-generated wallpapers.
+### Design Philosophy
+- **Glass-OS Aesthetic**: Light frosted panels floating on atmospheric backgrounds
+- **Living AI Core**: State-driven orb with specular highlights and audio waveforms
+- **System Language**: IT-native naming (Cognitive Core, Voice Interface, Runtime)
+- **Micro-Information**: Every element answers "why should I look at you?"
 
-## 📦 Installation
-1.  **Clone**: `git clone https://github.com/MrRenntech/Steel.git`
-2.  **Setup**: Run `prereq.bat` to install dependencies.
-    *   *Requires Python 3.10+*
-    *   *Recommend: FFMPEG (for sound)*
-3.  **Config**: Rename `.env.example` to `.env` and add your **GEMINI_API_KEY**.
-4.  **Run**: `python main.py`
+## 🛠️ Technology Stack
+| Layer | Technology |
+|-------|------------|
+| Backend | Python 3.10+, PySide6 (Qt 6) |
+| Frontend | QML (Qt Quick) |
+| AI Engine | Google Gemini 1.5 Pro |
+| State | QObject Signals/Properties |
 
-## 🎮 How to Use
--   **Voice**: Click "INITIATE VOICE UPLINK" and speak.
-    -   *"Analyze my screen"*
-    -   *"Play music"*
-    -   *"Check system status"*
--   **Security**: Go to the **Security Tab** to manage passwords or connect your VPN.
--   **Settings**: Change the Theme to "BMW" to see the dynamic wallpaper switch.
+## 📦 Quick Start
+```batch
+# 1. Clone
+git clone https://github.com/MrRenntech/Steel.git
+cd Steel
 
-## 🏗️ Building (EXE)
-Run `python build.py` to compile a standalone executable in `dist/`.
+# 2. Install dependencies
+prereq.bat
+# Or: pip install -r requirements.txt
+
+# 3. Configure
+copy .env.example .env
+# Add your GEMINI_API_KEY to .env
+
+# 4. Launch
+run.bat
+# Or: cd app && python main.py
+```
+
+## 🎨 Visual Features
+
+### 3-Zone Layout
+```
+┌─────────────────────────────────────────────┐
+│ TOP SYSTEM BAR (status / time / tabs)       │
+├─────────────────────────────────────────────┤
+│ LEFT (65%)         │ RIGHT (35%)            │
+│ Information Grid   │ AI Core Orb            │
+│ - Cognitive Core   │ - 5-layer depth        │
+│ - Voice Interface  │ - State-driven motion  │
+│ - Runtime          │ - Audio waveform       │
+│ - Connectivity     │ - Specular highlights  │
+├─────────────────────────────────────────────┤
+│ BOTTOM CONTEXT BAR (hints / mic / version)  │
+└─────────────────────────────────────────────┘
+```
+
+### Living Orb States
+| State | Visual |
+|-------|--------|
+| IDLE | Calm breathing, subtle 4px drift |
+| LISTENING | Cyan glow, audio waveform bars, pulsing |
+| THINKING | Amber glow, rotating depth ring |
+| RESPONDING | Green pulse, outward field expansion |
+
+### Curated Wallpapers
+- Ambient Sky (default)
+- Soft Horizon
+- Glass Fog
+- Warm Dawn
+
+## 📖 Documentation
+- **[HOW_TO.md](HOW_TO.md)** — Complete technical reference for interviews
+- **[.env.example](.env.example)** — Environment variable template
+
+## 🎮 Usage
+1. Click the **AI Orb** to activate voice input
+2. Speak naturally: *"What's the weather?"*, *"Analyze my screen"*
+3. Watch the orb transition through states
+4. Click **Environment** tile to change wallpaper
+
+## 📁 Project Structure
+```
+Steel/
+├── app/
+│   ├── main.py           # Entry point
+│   ├── core/             # AI engine, state management
+│   │   └── app_state.py  # Reactive state with Qt signals
+│   ├── ui/
+│   │   ├── main.qml      # 3-zone layout
+│   │   ├── components/   # CoreVisual, GlassTile, BackgroundField
+│   │   └── panels/       # AssistantPanel, WallpaperPanel
+│   └── themes/           # BMW-inspired themes
+├── HOW_TO.md             # Technical deep-dive
+├── run.bat               # Launch script
+├── prereq.bat            # Dependency installer
+└── requirements.txt
+```
+
+## 📝 Changelog
+- **v6.5** — 4-Phase Visual Overhaul
+  - Locked 3-zone layout (Top/Main/Bottom)
+  - Bottom context bar with mic level
+  - System naming (Cognitive Core, etc.)
+  - State-driven orb with 5 layers
+  - Audio waveform visualization
+  
+- **v6.4** — Command Center Refactor
+  - Wallpaper switching system
+  - True glass panels
+  - Background parallax
 
 ## 📝 License
 Open Source (MIT). Built for the community.
+
+---
+*v6.5 — Living Glass UI | December 2024*

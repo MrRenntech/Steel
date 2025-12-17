@@ -3,267 +3,371 @@ import QtQuick.Window
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import "components"
+import "panels"
 
 Window {
-    width: 800
-    height: 600
+    id: root
+    width: 1280
+    height: 800
     visible: true
     title: "Steel v6.4 Refactored"
     color: "black"
+    property string activeTab: "CORE"
+    property alias appTheme: theme
 
     // Theme Engine
     ThemeLoader {
         id: theme
     }
 
-    // Background Gradient (Premium Depth)
-    Rectangle {
+    UIContext {
+        id: ui
+    }
+
+    Component.onCompleted: ui.update(root)
+    onWidthChanged: ui.update(root)
+    onHeightChanged: ui.update(root)
+
+    // Background: Ambient Atmosphere (Light-leaning)
+    BackgroundField {
+        id: backgroundLayer
         anchors.fill: parent
-        color: theme.backgroundColor // Fallback
-        
-        gradient: theme.useGradient ? gradientObj : null
-        
-        Gradient {
-            id: gradientObj
-            GradientStop { position: 0.0; color: theme.gradientStart }
-            GradientStop { position: 0.5; color: theme.gradientCenter }
-            GradientStop { position: 1.0; color: theme.gradientEnd }
-        }
+        z: 0
+        assistantState: (app && app.assistantState) ? app.assistantState : "IDLE"
+        currentWallpaper: (app && app.currentWallpaper) ? app.currentWallpaper : "ambient_sky.png"
     }
 
-    // Background Image (Overlay if theme has one)
-    Image {
-        anchors.fill: parent
-        source: theme.backgroundImage
-        fillMode: Image.PreserveAspectCrop
-        visible: source !== ""
-        opacity: 0.5
-    }
-
-    // Central AI Core
-    // Offset Logic: The Orb "leans" towards the information panel (-6% width),
-    // creating a visual tension that links the two elements.
-    CoreVisual {
-        id: core
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: -parent.width * 0.06 // Visual lean towards panel
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 20
-        theme: theme
-        assistantState: app.assistantState
-        onClicked: {
-            if (app.assistantState === "IDLE") {
-                app.set_state("LISTENING")
-            } else {
-                app.set_state("IDLE")
-            }
-        }
-    }
-
-    // Visual Link: Subtle Accent Echo
-    // A faint highlight that bridges the gap between the Orb and the Panel,
-    // implying they are part of the same system without using a hard line.
+    // New Glass Top Bar (Status Strip)
     Rectangle {
-        width: 2
-        height: 120
-        anchors.verticalCenter: core.verticalCenter
-        anchors.right: contextColumn.left
-        anchors.rightMargin: 24
-        color: Qt.rgba(
-            theme.accentColor.r,
-            theme.accentColor.g,
-            theme.accentColor.b,
-            0.08
-        )
-    }
-
-    // Right-side Context Column (BMW-style Refined)
-    Rectangle {
-        id: contextColumn
-        width: parent.width * 0.28
+        id: topBar
+        height: 64 // Thin strip
+        width: parent.width
         anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
+        z: 100 // Always on top
 
-        color: Qt.rgba(
-            theme.secondaryColor.r,
-            theme.secondaryColor.g,
-            theme.secondaryColor.b,
-            0.35
-        )
-
-        // Subtle Visual Link: Accent colored border echo
-        border.color: Qt.rgba(theme.accentColor.r, theme.accentColor.g, theme.accentColor.b, 0.08)
+        color: Qt.rgba(10/255, 18/255, 28/255, 0.6) // Glassy
+        border.color: Qt.rgba(1,1,1,0.08)
         border.width: 1
 
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 40
-            spacing: 0
+        // Horizontal Line at bottom
+        Rectangle {
+            anchors.bottom: parent.bottom
+            width: parent.width
+            height: 1
+            color: Qt.rgba(1,1,1,0.1)
+        }
 
-            // 1. ASSISTANT LABEL
-            Text {
-                text: "ASSISTANT"
-                color: theme.textColor
-                font.family: theme.fontFamily
-                font.pixelSize: 11
-                opacity: 0.35
-                font.letterSpacing: 1.4
+        // BRANDING
+        Text {
+            text: "STEEL"
+            font.pixelSize: 18
+            font.weight: Font.Black
+            color: "white"
+            opacity: 0.9
+            font.letterSpacing: 4.0 // Corrected
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 32
+            font.family: theme.fontFamily
+        }
+
+        Row {
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 160 // Shift tabs right
+            spacing: 42
+
+            Repeater {
+                model: ["CORE", "INPUT", "SYSTEM", "NETWORK", "CONTROL"]
+
+                delegate: Item {
+                    property bool active: root.activeTab === modelData
+                    width: textItem.implicitWidth + 12
+                    height: parent.height
+                    
+                    // Tab Label
+                    Text {
+                        id: textItem
+                        text: modelData
+                        anchors.centerIn: parent
+                        anchors.verticalCenterOffset: -2
+                        font.pixelSize: 13
+                        font.bold: true
+                        color: active ? "white" : "white"
+                        opacity: active ? 1.0 : 0.4 // Fade inactive
+                        font.letterSpacing: 2.0 // Automotive wide
+                        font.family: theme.fontFamily
+                    }
+
+                    // Glow Underline
+                    Rectangle {
+                        width: active ? parent.width : 0
+                        height: 2
+                        radius: 1
+                        anchors.bottom: parent.bottom
+                        color: theme.accentColor
+                        opacity: active ? 1.0 : 0.0
+                        
+                        // Fake Glow (Shadow)
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: parent.width + 4
+                            height: 6
+                            radius: 3
+                            color: theme.accentColor
+                            opacity: 0.4
+                        }
+
+                        Behavior on width {
+                            NumberAnimation { duration: 240; easing.type: Easing.OutCubic }
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: root.activeTab = modelData
+                        cursorShape: Qt.PointingHandCursor
+                    }
+                }
             }
+        }
 
-            // 2. STATE (Hero)
+        // Right-side Status
+        Row {
+            anchors.right: parent.right
+            anchors.rightMargin: 32
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 24
+
             Text {
-                text: app.assistantState
-                color: theme.primaryColor
+                text: Qt.formatDateTime(new Date(), "hh:mm")
+                font.pixelSize: 14
+                opacity: 0.8
+                color: "white"
                 font.family: theme.fontFamily
-                font.pixelSize: 32
                 font.bold: true
-                opacity: 0.95
             }
-            
-            // 3. Breathing Space
-            Item { Layout.preferredHeight: 28 }
 
-            // 4. SYSTEM LABEL
-            Text {
-                text: "SYSTEM"
-                color: theme.textColor
-                font.family: theme.fontFamily
-                font.pixelSize: 11
-                opacity: 0.35
-                font.letterSpacing: 1.4
+            Rectangle {
+                width: 1
+                height: 12
+                color: "white"
+                opacity: 0.2
+                anchors.verticalCenter: parent.verticalCenter
             }
-            
-            // SYSTEM Value
+
             Text {
                 text: "ONLINE"
-                color: theme.textColor
+                font.pixelSize: 11
+                color: theme.colorSuccess
+                font.letterSpacing: 1.2
                 font.family: theme.fontFamily
-                font.pixelSize: 15
-                opacity: 0.8
-                // No bold, Neutral color
-            }
-
-            // 5. Push Time Down (35% of height)
-            Item { Layout.preferredHeight: contextColumn.height * 0.35 }
-
-            // TIME
-            Text {
-                id: timeLabel
-                text: Qt.formatDateTime(new Date(), "hh:mm AP")
-                color: theme.textColor
-                font.family: theme.fontFamily
-                font.pixelSize: 24
-                opacity: 0.85
-            }
-
-            // DATE
-            Text {
-                id: dateLabel
-                text: Qt.formatDateTime(new Date(), "dddd, dd MMM")
-                color: theme.textColor
-                font.family: theme.fontFamily
-                font.pixelSize: 12
-                opacity: 0.45
-            }
-            
-            Item { Layout.fillHeight: true }
-        }
-        
-        Timer {
-            interval: 1000; running: true; repeat: true
-            onTriggered: {
-                timeLabel.text = Qt.formatDateTime(new Date(), "hh:mm AP")
-                dateLabel.text = Qt.formatDateTime(new Date(), "dddd, dd MMM")
-            }
-        }
-    }
-    
-
-    property bool devMode: false
-
-    Shortcut {
-        sequence: "Ctrl+D"
-        onActivated: devMode = !devMode
-    }
-
-    // Debug Controls (Strictly for verifying states)
-    Rectangle {
-        id: devPanel
-        visible: devMode
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.margins: 20
-        width: devLayout.implicitWidth + 20
-        height: devLayout.implicitHeight + 20
-        color: "#111111" // Dark background
-        border.color: theme.primaryColor
-        border.width: 1
-        radius: 8
-        opacity: 0.3 // De-emphasized
-        
-        // Appear on hover
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: devPanel.opacity = 1.0
-            onExited: devPanel.opacity = 0.3
-            propagateComposedEvents: true
-            z: -1
-        }
-
-        ColumnLayout {
-            id: devLayout
-            anchors.centerIn: parent
-            spacing: 5
-            
-            Text {
-                text: "DEV CONTROLS"
-                color: theme.textColor
-                font.family: theme.fontFamily
-                font.pixelSize: 10
+                // Subtle glow/pulse?
                 font.bold: true
-                Layout.alignment: Qt.AlignRight
-            }
-            
-            Text {
-                text: "STATE: " + app.assistantState
-                color: theme.textColor
-                font.family: theme.fontFamily
-                font.pixelSize: 10
-                Layout.alignment: Qt.AlignRight
-            }
-            
-            GridLayout {
-                columns: 2
-                columnSpacing: 5
-                rowSpacing: 5
-                Layout.alignment: Qt.AlignRight
-                
-                DebugButton { text: "IDLE"; onClicked: app.set_state("IDLE") }
-                DebugButton { text: "LISTEN"; onClicked: app.set_state("LISTENING") }
-                DebugButton { text: "THINK"; onClicked: app.set_state("THINKING") }
-                DebugButton { text: "RESPOND"; onClicked: app.set_state("RESPONDING") }
-                DebugButton { text: "ERROR"; onClicked: app.set_state("ERROR") }
-                // DebugButton { text: "THEME"; onClicked: app.cycle_theme() } // Disabled
             }
         }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // MAIN CONTENT AREA (Between Top Bar and Bottom Bar)
+    // Split: 65% Left (Tiles) / 35% Right (AI Core)
+    // ═══════════════════════════════════════════════════════
+    Row {
+        id: mainContent
+        anchors.top: topBar.bottom
+        anchors.bottom: bottomBar.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+
+        // LEFT CONTENT ZONE (65%)
+        Rectangle {
+            width: parent.width * 0.65
+            height: parent.height
+            color: "transparent"
+
+            TabContainer {
+                anchors.fill: parent
+                activeTab: root.activeTab
+                theme: theme
+            }
+        }
+
+        // RIGHT AI CORE ZONE (35%)
+        Rectangle {
+            width: parent.width * 0.35
+            height: parent.height
+            color: "transparent"
+
+            // Light Glass Container
+            Rectangle {
+                anchors.fill: parent
+                anchors.margins: 16
+                anchors.bottomMargin: 8
+                radius: 28
+                
+                color: Qt.rgba(1, 1, 1, 0.06)
+                border.width: 1
+                border.color: Qt.rgba(1, 1, 1, 0.15)
+                
+                // Shadow
+                Rectangle {
+                    anchors.fill: parent
+                    anchors.topMargin: 6
+                    anchors.leftMargin: 3
+                    anchors.rightMargin: -3
+                    anchors.bottomMargin: -10
+                    radius: parent.radius + 4
+                    color: Qt.rgba(0, 0, 0, 0.3)
+                    z: -1
+                }
+            }
+
+            CoreVisual {
+                id: core
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: -20
+                theme: root.appTheme
+                assistantState: (app && app.assistantState) ? app.assistantState : "IDLE"
+                activeTab: root.activeTab
+                audioLevel: (app && app.audioLevel) ? app.audioLevel : 0.0
+
+                onClicked: {
+                    if (app.assistantState === "IDLE") {
+                        app.request_listening()
+                    } else {
+                        app.set_state("IDLE")
+                    }
+                }
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // BOTTOM CONTEXT BAR (Hints, Mic, Actions)
+    // ═══════════════════════════════════════════════════════
+    Rectangle {
+        id: bottomBar
+        height: 56
+        width: parent.width
+        anchors.bottom: parent.bottom
+        z: 100
+        
+        color: Qt.rgba(10/255, 18/255, 28/255, 0.7)
+        border.color: Qt.rgba(1, 1, 1, 0.08)
+        border.width: 1
+        
+        // Top border line
+        Rectangle {
+            anchors.top: parent.top
+            width: parent.width
+            height: 1
+            color: Qt.rgba(1, 1, 1, 0.1)
+        }
+        
+        Row {
+            anchors.fill: parent
+            anchors.leftMargin: 32
+            anchors.rightMargin: 32
+            spacing: 24
+            
+            // Left: Context hint
+            Column {
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 2
+                
+                Text {
+                    text: {
+                        switch((app && app.assistantState) ? app.assistantState : "IDLE") {
+                            case "LISTENING": return "Listening..."
+                            case "THINKING": return "Processing request..."
+                            case "RESPONDING": return "Speaking..."
+                            default: return "Ready for input"
+                        }
+                    }
+                    font.pixelSize: 13
+                    font.weight: Font.Medium
+                    color: Qt.rgba(1, 1, 1, 0.8)
+                    font.family: theme.fontFamily
+                }
+                
+                Text {
+                    text: "Click orb or press Space to activate voice"
+                    font.pixelSize: 10
+                    color: Qt.rgba(1, 1, 1, 0.4)
+                    font.family: theme.fontFamily
+                }
+            }
+            
+            Item { width: 1; Layout.fillWidth: true }
+            
+            // Right: Mic level indicator
+            Row {
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 8
+                
+                // Mic bars
+                Repeater {
+                    model: 5
+                    Rectangle {
+                        width: 3
+                        height: {
+                            var level = (app && app.audioLevel) ? app.audioLevel : 0
+                            var baseHeight = 8 + index * 4
+                            return baseHeight * (0.3 + level * 0.7)
+                        }
+                        radius: 1.5
+                        color: {
+                            var level = (app && app.audioLevel) ? app.audioLevel : 0
+                            return level > 0.3 ? Qt.rgba(0.4, 0.9, 1.0, 0.8) : Qt.rgba(1, 1, 1, 0.3)
+                        }
+                        anchors.verticalCenter: parent.verticalCenter
+                        
+                        Behavior on height { NumberAnimation { duration: 50 } }
+                        Behavior on color { ColorAnimation { duration: 100 } }
+                    }
+                }
+                
+                Text {
+                    text: "MIC"
+                    font.pixelSize: 9
+                    font.letterSpacing: 1.0
+                    color: Qt.rgba(1, 1, 1, 0.4)
+                    font.family: theme.fontFamily
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+            
+            // Separator
+            Rectangle {
+                width: 1
+                height: 24
+                color: Qt.rgba(1, 1, 1, 0.15)
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            
+            // Version
+            Text {
+                text: "v6.5"
+                font.pixelSize: 10
+                color: Qt.rgba(1, 1, 1, 0.3)
+                font.family: theme.fontFamily
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // WALLPAPER PANEL OVERLAY
+    // ═══════════════════════════════════════════════════════
+    WallpaperPanel {
+        id: wallpaperPanel
+        z: 200
+        theme: root.appTheme
     }
     
-    component DebugButton: Button {
-        background: Rectangle {
-            color: parent.down ? theme.primaryColor : Qt.rgba(1,1,1,0.1)
-            radius: 4
-            border.color: theme.primaryColor
-            border.width: 1
-        }
-        contentItem: Text {
-            text: parent.text
-            color: parent.down ? theme.backgroundColor : theme.textColor
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            font.pixelSize: 12
-            padding: 8
-        }
+    // Function to open wallpaper panel (call from settings tile)
+    function openWallpaperPanel() {
+        wallpaperPanel.show()
     }
+
 }

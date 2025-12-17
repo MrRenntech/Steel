@@ -1,5 +1,6 @@
 from enum import Enum
-from PySide6.QtCore import QObject, Signal, Property, Slot
+from PySide6.QtCore import QObject, Signal, Property, Slot, QTimer
+from .mic_monitor import MicMonitor
 
 class AssistantState(str, Enum):
     IDLE = "IDLE"
@@ -14,6 +15,19 @@ class AppState(QObject):
         self._status = "Steel Core Online"
         self._current_theme = "base"
         self._assistant_state = AssistantState.IDLE.value
+        self._audio_level = 0.0
+        self._partial_transcript = ""
+        self._last_intent = ""
+        self._confidence = 0.0
+        self._current_wallpaper = "ambient_sky.png"  # Default wallpaper
+        
+        # Mic Monitor
+        self.mic = MicMonitor()
+        self.mic.start()
+        
+        self.audio_timer = QTimer()
+        self.audio_timer.timeout.connect(self.update_audio)
+        self.audio_timer.start(16) # ~60fps
         
         # Clear log file on start
         with open("logs.txt", "w") as f:
@@ -23,6 +37,12 @@ class AppState(QObject):
     statusChanged = Signal()
     themeChanged = Signal()
     assistantStateChanged = Signal()
+    listeningImminent = Signal()
+    audioLevelChanged = Signal()
+    transcriptChanged = Signal()
+    lastIntentChanged = Signal()
+    confidenceChanged = Signal()
+    wallpaperChanged = Signal()
 
     # Properties
     @Property(str, notify=statusChanged)
@@ -37,7 +57,54 @@ class AppState(QObject):
     def assistantState(self):
         return self._assistant_state
 
+    @Property(float, notify=audioLevelChanged)
+    def audioLevel(self):
+        return self._audio_level
+
+    @Property(str, notify=transcriptChanged)
+    def partialTranscript(self):
+        return self._partial_transcript
+
+    @Property(str, notify=lastIntentChanged)
+    def last_intent(self):
+        return self._last_intent
+
+    @Property(float, notify=confidenceChanged)
+    def confidence(self):
+        return self._confidence
+
+    @Property(str, notify=wallpaperChanged)
+    def currentWallpaper(self):
+        return self._current_wallpaper
+
     # Slots
+    @Slot(float)
+    def set_audio_level(self, level):
+        if self._audio_level != level:
+            self._audio_level = level
+            self.audioLevelChanged.emit()
+
+    @Slot()
+    def request_listening(self):
+        self.listeningImminent.emit()
+        QTimer.singleShot(150, lambda: self.set_state("LISTENING"))
+
+    @Slot(str, float)
+    def set_intent(self, intent, confidence):
+        if self._last_intent != intent or self._confidence != confidence:
+            self._last_intent = intent
+            self._confidence = confidence
+            self.lastIntentChanged.emit()
+            self.confidenceChanged.emit()
+            self.log(f"Intent detected: {intent} ({confidence:.2f})")
+
+    @Slot(str)
+    def set_wallpaper(self, wallpaper):
+        if self._current_wallpaper != wallpaper:
+            self._current_wallpaper = wallpaper
+            self.wallpaperChanged.emit()
+            self.log(f"Wallpaper changed to: {wallpaper}")
+
     @Slot(str)
     def set_state(self, new_state):
         # Validate against Enum
@@ -76,3 +143,11 @@ class AppState(QObject):
             with open("logs.txt", "a") as f:
                 f.write(f"{message}\n")
         except: pass
+
+    def update_audio(self):
+        # Smooth decay
+        self._audio_level *= 0.85
+        if hasattr(self, 'mic') and self.mic:
+            self._audio_level = max(self._audio_level, self.mic.level)
+
+        self.audioLevelChanged.emit()

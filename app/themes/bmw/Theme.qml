@@ -13,8 +13,11 @@ QtObject {
 
     // Colors
     // Primary: Soft White (#EAF2F8) for readability
+    property color primaryColor: "#EAF2F8"
     // Secondary: Dark Slate (#1A222C) for surfaces
+    property color secondaryColor: "#1A222C"
     // Accent: iDrive Blue (#6FAED9) for technical highlights
+    property color accentColor: "#6FAED9"
     property color textColor: "#FFFFFF"
     
     // Semantic Colors (Desaturated, Cold)
@@ -39,7 +42,7 @@ QtObject {
     // Gradient Support ("Premium Depth")
     property bool useGradient: true
     property color gradientStart: "#18202A"   // Top glow
-    property color gradientCenter: "#0E141B"  // Core graphite
+    property color gradientCenter: "#121A24"  // Core graphite
     property color gradientEnd: "#070B10"     // Bottom falloff
     
     // Orb Gradient (Subtle Radial Simulation)

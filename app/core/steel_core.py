@@ -1,10 +1,12 @@
 from PySide6.QtCore import QObject, QTimer, Slot
 from .app_state import AppState
 
+
 class SteelCore(QObject):
     def __init__(self, app_state: AppState):
         super().__init__()
         self.app_state = app_state
+        
         # Connect to state changes
         self.app_state.assistantStateChanged.connect(self.on_state_changed)
         
@@ -68,3 +70,5 @@ class SteelCore(QObject):
     def transition_to_idle(self):
         print("[SteelCore] Interaction complete. Idle.")
         self.app_state.set_state("IDLE")
+
+
