@@ -409,6 +409,102 @@ Item {
                     }
                 }
             }
+            
+            // Font Selection
+            Column {
+                spacing: 12
+                width: parent.width
+                
+                Text {
+                    text: "Font"
+                    font.pixelSize: 12
+                    font.weight: Font.Medium
+                    color: Qt.rgba(1, 1, 1, 0.7)
+                    font.family: theme ? theme.fontFamily : "Segoe UI"
+                }
+                
+                Row {
+                    spacing: 12
+                    
+                    // BMW Font (Inter)
+                    Rectangle {
+                        width: 100
+                        height: 60
+                        radius: 8
+                        color: theme && theme.fontFamily.indexOf("Inter") !== -1 
+                            ? Qt.rgba(0.4, 0.9, 1.0, 0.15) 
+                            : Qt.rgba(1, 1, 1, 0.06)
+                        border.width: theme && theme.fontFamily.indexOf("Inter") !== -1 ? 2 : 1
+                        border.color: theme && theme.fontFamily.indexOf("Inter") !== -1 
+                            ? Qt.rgba(0.4, 0.9, 1.0, 0.6)
+                            : Qt.rgba(1, 1, 1, 0.15)
+                        
+                        Column {
+                            anchors.centerIn: parent
+                            spacing: 2
+                            Text {
+                                text: "Inter"
+                                font.pixelSize: 14
+                                font.weight: Font.Medium
+                                font.family: "Inter, Segoe UI"
+                                color: Qt.rgba(1, 1, 1, 0.9)
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                            Text {
+                                text: "BMW"
+                                font.pixelSize: 9
+                                color: Qt.rgba(1, 1, 1, 0.5)
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                        }
+                        
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: if(root.theme) root.theme.setTheme("bmw")
+                        }
+                    }
+                    
+                    // Audi Font (Montserrat)
+                    Rectangle {
+                        width: 100
+                        height: 60
+                        radius: 8
+                        color: theme && theme.fontFamily.indexOf("Montserrat") !== -1 
+                            ? Qt.rgba(0.4, 0.9, 1.0, 0.15) 
+                            : Qt.rgba(1, 1, 1, 0.06)
+                        border.width: theme && theme.fontFamily.indexOf("Montserrat") !== -1 ? 2 : 1
+                        border.color: theme && theme.fontFamily.indexOf("Montserrat") !== -1 
+                            ? Qt.rgba(0.4, 0.9, 1.0, 0.6)
+                            : Qt.rgba(1, 1, 1, 0.15)
+                        
+                        Column {
+                            anchors.centerIn: parent
+                            spacing: 2
+                            Text {
+                                text: "Montserrat"
+                                font.pixelSize: 12
+                                font.weight: Font.Light
+                                font.family: "Montserrat, Segoe UI"
+                                color: Qt.rgba(1, 1, 1, 0.9)
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                            Text {
+                                text: "AUDI"
+                                font.pixelSize: 9
+                                color: Qt.rgba(1, 1, 1, 0.5)
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                        }
+                        
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: if(root.theme) root.theme.setTheme("audi")
+                        }
+                    }
+                }
+            }
         }
     }
 
