@@ -4,19 +4,78 @@ QtObject {
     id: root
     
     // ═══════════════════════════════════════════════════════
-    // THEME MANAGER (Central Authority)
+    // THEME MANAGER V2 (Central Authority)
     // All tiles, orb, blur, motion read ONLY from here
     // ═══════════════════════════════════════════════════════
     
     // Current active theme ID
     property string activeThemeId: "bmw"
     
-    // Wallpaper (atmosphere, separate from theme)
-    property string wallpaperId: "ambient_sky.png"
-    signal wallpaperChanged(string id)
+    // Current active wallpaper
+    property string activeWallpaperId: "ambient_sky"
     
-    // Theme changed signal
+    // Signals
+    signal wallpaperChanged(string id)
     signal themeChanged(string id)
+    
+    // ─────────────────────────────────────────────────────
+    // WALLPAPER REGISTRY (with luminance metadata)
+    // ─────────────────────────────────────────────────────
+    property var wallpapers: ({
+        "ambient_sky": {
+            name: "Ambient Sky",
+            source: "ambient_sky.png",
+            luminance: 0.25,        // Dark
+            accentHint: "#6FAED9",  // Cool blue
+            mood: "calm"
+        },
+        "warm_dawn": {
+            name: "Warm Dawn",
+            source: "warm_dawn.png",
+            luminance: 0.55,        // Mid-tone
+            accentHint: "#E8A87C",  // Warm orange
+            mood: "warm"
+        },
+        "glass_fog": {
+            name: "Glass Fog",
+            source: "glass_fog.png",
+            luminance: 0.70,        // Bright
+            accentHint: "#B0C4DE",  // Light steel
+            mood: "neutral"
+        },
+        "midnight": {
+            name: "Midnight",
+            source: "midnight.png",
+            luminance: 0.10,        // Very dark
+            accentHint: "#4A5568",  // Slate
+            mood: "focus"
+        },
+        "aurora": {
+            name: "Aurora",
+            source: "aurora.png",
+            luminance: 0.30,
+            accentHint: "#48BB78",  // Green
+            mood: "vibrant"
+        }
+    })
+    
+    // Current wallpaper properties
+    property real wallpaperLuminance: wallpapers[activeWallpaperId] 
+        ? wallpapers[activeWallpaperId].luminance : 0.25
+    property string wallpaperId: wallpapers[activeWallpaperId] 
+        ? wallpapers[activeWallpaperId].source : "ambient_sky.png"
+    
+    // ─────────────────────────────────────────────────────
+    // ADAPTIVE TEXT (based on wallpaper luminance)
+    // ─────────────────────────────────────────────────────
+    property color primaryText: wallpaperLuminance > 0.6 
+        ? "#0A0A0A" : "#FFFFFF"
+    property color secondaryText: wallpaperLuminance > 0.6 
+        ? "#444444" : "#CCCCCC"
+    property real textOpacityPrimary: wallpaperLuminance > 0.6 
+        ? 0.9 : 0.95
+    property real textOpacitySecondary: wallpaperLuminance > 0.6 
+        ? 0.6 : 0.5
     
     // ─────────────────────────────────────────────────────
     // THEME CONTRACT (sacred - all themes must define these)
@@ -30,12 +89,12 @@ QtObject {
     property int radiusPanel: themes[activeThemeId].radiusPanel
     property int padding: themes[activeThemeId].padding
     
-    // Colors
+    // Colors (theme base, but text adapts to wallpaper)
     property color accentColor: themes[activeThemeId].accentColor
     property color backgroundColor: themes[activeThemeId].backgroundColor
-    property color primaryColor: themes[activeThemeId].primaryColor
-    property color secondaryColor: themes[activeThemeId].secondaryColor
-    property color textColor: themes[activeThemeId].textColor
+    property color primaryColor: primaryText  // ADAPTIVE
+    property color secondaryColor: secondaryText  // ADAPTIVE
+    property color textColor: primaryText  // ADAPTIVE
     property color colorSuccess: themes[activeThemeId].colorSuccess
     property color colorWarning: themes[activeThemeId].colorWarning
     property color colorError: themes[activeThemeId].colorError
@@ -46,8 +105,10 @@ QtObject {
     property real glassBorder: themes[activeThemeId].glassBorder
     property real glassShadow: themes[activeThemeId].glassShadow
     
-    // Typography
+    // Typography (per-theme identity)
     property string fontFamily: themes[activeThemeId].fontFamily
+    property int fontWeightPrimary: themes[activeThemeId].fontWeightPrimary
+    property int fontWeightSecondary: themes[activeThemeId].fontWeightSecondary
     property int fontSizeH1: themes[activeThemeId].fontSizeH1
     property int fontSizeH2: themes[activeThemeId].fontSizeH2
     property int fontSizeBody: themes[activeThemeId].fontSizeBody
@@ -76,7 +137,7 @@ QtObject {
     property color orbGradientEdge: themes[activeThemeId].orbGradientEdge
     
     // ─────────────────────────────────────────────────────
-    // THEME REGISTRY (all available themes)
+    // THEME REGISTRY
     // ─────────────────────────────────────────────────────
     property var themes: ({
         "bmw": {
@@ -84,6 +145,16 @@ QtObject {
             id: "bmw",
             name: "BMW",
             description: "Soft, organic",
+            
+            // Typography (BMW Type Next style → Inter fallback)
+            fontFamily: "Inter, Segoe UI",
+            fontWeightPrimary: Font.Medium,
+            fontWeightSecondary: Font.Normal,
+            fontSizeH1: 32,
+            fontSizeH2: 24,
+            fontSizeBody: 14,
+            letterSpacing: 1.2,
+            textTransform: "none",
             
             // Geometry (SOFT EDGES)
             tileRadius: 18,
@@ -94,16 +165,13 @@ QtObject {
             padding: 24,
             
             // Tile Interaction (ORGANIC)
-            tileHoverLift: 0,             // No lift, just glow
-            tilePressScale: 0.97,         // Soft press
-            tileBreathingEnabled: true,   // Subtle breathing
+            tileHoverLift: 0,
+            tilePressScale: 0.97,
+            tileBreathingEnabled: true,
             
             // Colors
             accentColor: "#6FAED9",
             backgroundColor: "#0E141B",
-            primaryColor: "#EAF2F8",
-            secondaryColor: "#1A222C",
-            textColor: "#FFFFFF",
             colorSuccess: "#4A7A68",
             colorWarning: "#BF9E60",
             colorError: "#8C2F2F",
@@ -113,14 +181,6 @@ QtObject {
             glassOpacity: 0.08,
             glassBorder: 0.15,
             glassShadow: 0.30,
-            
-            // Typography
-            fontFamily: "Segoe UI",
-            fontSizeH1: 32,
-            fontSizeH2: 24,
-            fontSizeBody: 14,
-            letterSpacing: 1.2,
-            textTransform: "none",
             
             // Motion (CALM)
             motionProfile: "calm",
@@ -134,7 +194,7 @@ QtObject {
             useGeometricOrb: false,
             orbGlowIntensity: 0.3,
             orbPulseSpeed: 5000,
-            orbSegments: 0,               // No segments
+            orbSegments: 0,
             orbRingGap: 0,
             
             // Gradients
@@ -143,7 +203,10 @@ QtObject {
             gradientCenter: "#121A24",
             gradientEnd: "#070B10",
             orbGradientCenter: "#D8E6F3",
-            orbGradientEdge: "#5A8BB0"
+            orbGradientEdge: "#5A8BB0",
+            
+            // Adaptive text behavior
+            adaptiveText: true
         },
         
         "audi": {
@@ -152,57 +215,56 @@ QtObject {
             name: "AUDI",
             description: "Sharp, technical",
             
+            // Typography (Audi Type Extended style → Montserrat fallback)
+            fontFamily: "Montserrat, Segoe UI",
+            fontWeightPrimary: Font.Light,
+            fontWeightSecondary: Font.ExtraLight,
+            fontSizeH1: 26,
+            fontSizeH2: 18,
+            fontSizeBody: 12,
+            letterSpacing: 0.6,
+            textTransform: "uppercase",
+            
             // Geometry (HARD EDGES)
             tileRadius: 6,
-            tileBlur: 0.25,              // More blur contrast
-            tileBorderOpacity: 0.25,     // Stronger borders
-            tileShadowOpacity: 0.08,     // Minimal shadow
+            tileBlur: 0.25,
+            tileBorderOpacity: 0.25,
+            tileShadowOpacity: 0.08,
             radiusPanel: 8,
             padding: 18,
             
-            // Tile Interaction
-            tileHoverLift: 3,            // Slight lift on hover
-            tilePressScale: 0.98,        // Instant press feedback
-            tileBreathingEnabled: false, // No organic breathing
+            // Tile Interaction (TECHNICAL)
+            tileHoverLift: 3,
+            tilePressScale: 0.98,
+            tileBreathingEnabled: false,
             
             // Colors (HIGH CONTRAST)
-            accentColor: "#EAEAEA",      // Neutral white accent
-            backgroundColor: "#08090B",   // Deeper black
-            primaryColor: "#FFFFFF",
-            secondaryColor: "#18191C",
-            textColor: "#FFFFFF",
+            accentColor: "#EAEAEA",
+            backgroundColor: "#08090B",
             colorSuccess: "#00E676",
             colorWarning: "#FF9100",
             colorError: "#FF1744",
-            backgroundContrast: 1.15,    // Higher contrast
+            backgroundContrast: 1.15,
             
             // Glass (FLAT)
             glassOpacity: 0.03,
             glassBorder: 0.25,
             glassShadow: 0.08,
             
-            // Typography (TIGHTER, DATA-DENSE)
-            fontFamily: "Segoe UI",
-            fontSizeH1: 26,
-            fontSizeH2: 18,
-            fontSizeBody: 12,
-            letterSpacing: 0.6,
-            textTransform: "uppercase",  // More uppercase
-            
             // Motion (FAST, DIRECT)
             motionProfile: "sharp",
-            transitionFast: 80,          // Very quick
-            transitionNormal: 180,       // Fast
+            transitionFast: 80,
+            transitionNormal: 180,
             transitionSlow: 280,
-            easingType: Easing.OutQuart, // Sharp deceleration
+            easingType: Easing.OutQuart,
             
             // Orb (GEOMETRIC MACHINE)
             orbStyle: "geometric",
             useGeometricOrb: true,
-            orbGlowIntensity: 0.08,      // Minimal glow
-            orbPulseSpeed: 1500,         // Faster pulse
-            orbSegments: 12,             // Radial tick count
-            orbRingGap: 4,               // Gap between rings
+            orbGlowIntensity: 0.08,
+            orbPulseSpeed: 1500,
+            orbSegments: 12,
+            orbRingGap: 4,
             
             // Gradients (FLAT)
             useGradient: false,
@@ -210,7 +272,10 @@ QtObject {
             gradientCenter: "#08090B",
             gradientEnd: "#040506",
             orbGradientCenter: "#F0F0F0",
-            orbGradientEdge: "#808080"
+            orbGradientEdge: "#808080",
+            
+            // Adaptive text behavior
+            adaptiveText: true
         }
     })
     
@@ -228,17 +293,29 @@ QtObject {
         }
     }
     
-    function setWallpaper(wallpaper) {
-        console.log("ThemeManager: Setting wallpaper to " + wallpaper)
-        wallpaperId = wallpaper
-        wallpaperChanged(wallpaper)
+    function setWallpaper(wallpaperId) {
+        if (wallpapers[wallpaperId]) {
+            console.log("ThemeManager: Setting wallpaper to " + wallpaperId)
+            activeWallpaperId = wallpaperId
+            wallpaperChanged(wallpapers[wallpaperId].source)
+        } else {
+            console.warn("ThemeManager: Unknown wallpaper " + wallpaperId)
+        }
     }
     
     function getThemeList() {
         return Object.keys(themes)
     }
     
+    function getWallpaperList() {
+        return Object.keys(wallpapers)
+    }
+    
     function getThemeInfo(themeId) {
         return themes[themeId] || null
+    }
+    
+    function getWallpaperInfo(wallpaperId) {
+        return wallpapers[wallpaperId] || null
     }
 }
