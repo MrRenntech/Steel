@@ -1,1 +1,4 @@
 === STEEL SESSION STARTED ===
+State changed to: LISTENING
+State changed to: THINKING
+State changed to: RESPONDING
