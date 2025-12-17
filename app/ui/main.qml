@@ -78,7 +78,7 @@ Window {
             spacing: 42
 
             Repeater {
-                model: ["CORE", "INPUT", "SYSTEM", "NETWORK", "CONTROL"]
+                model: ["CORE", "INPUT", "SYSTEM", "NETWORK", "SETTINGS"]
 
                 delegate: Item {
                     property bool active: root.activeTab === modelData

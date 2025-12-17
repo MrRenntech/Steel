@@ -15,7 +15,7 @@ Item {
         case "INPUT": return 1
         case "SYSTEM": return 2
         case "NETWORK": return 3
-        case "CONTROL": return 4
+        case "SETTINGS": return 4
         }
         return 0
     }

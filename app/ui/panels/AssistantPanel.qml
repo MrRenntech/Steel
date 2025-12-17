@@ -99,25 +99,6 @@ Item {
             uiScale: ui.scale
         }
         
-        GlassTile {
-            Layout.columnSpan: 2
-            Layout.fillWidth: true
-            Layout.preferredHeight: 72
-            
-            title: "ENVIRONMENT"
-            value: "Atmosphere"
-            subtitle: "Select wallpaper"
-            statusHint: "CUSTOMIZE"
-            icon: "../../assets/icons/settings.svg"
-            uiScale: ui.scale
-            
-            onClicked: {
-                if (typeof openWallpaperPanel === "function") {
-                    openWallpaperPanel()
-                }
-            }
-        }
-        
         // Breathing room
         Item {
             Layout.fillHeight: true

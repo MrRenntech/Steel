@@ -4,20 +4,20 @@ import "../../motion"
 QtObject {
     // BMW Visual Language
     // "Engineering Confidence"
+    // Soft gradients, organic curves, calm motion
+    
+    // Identity
+    property string themeName: "bmw"
     
     // Background: Near-black with blue-gray hint (Graphite Blue)
-    // Concept: "Lit from above" - creates vertical depth
     property string backgroundImage: ""
     property var backgroundGradient: null 
     property color backgroundColor: "#0E141B" // BMW Graphite Blue
 
     // Colors
-    // Primary: Soft White (#EAF2F8) for readability
     property color primaryColor: "#EAF2F8"
-    // Secondary: Dark Slate (#1A222C) for surfaces
     property color secondaryColor: "#1A222C"
-    // Accent: iDrive Blue (#6FAED9) for technical highlights
-    property color accentColor: "#6FAED9"
+    property color accentColor: "#6FAED9" // iDrive Blue
     property color textColor: "#FFFFFF"
     
     // Semantic Colors (Desaturated, Cold)
@@ -27,28 +27,44 @@ QtObject {
 
     // Typography
     property string fontFamily: "Segoe UI"
-    property int fontSizeH1: 32 // Calm sizing
+    property int fontSizeH1: 32
     property int fontSizeH2: 24
     property int fontSizeBody: 14
+    property real letterSpacing: 1.2 // More relaxed
     
-    // Geometry (Minimal borders, soft edges)
-    property int radiusSmall: 1
-    property int radiusLarge: 4
-    property int padding: 24 // Calm, deliberate spacing
+    // Geometry (Soft, rounded)
+    property int radiusSmall: 8
+    property int radiusLarge: 16
+    property int radiusTile: 20   // Soft tiles
+    property int radiusPanel: 28  // Soft panels
+    property int padding: 24
     
+    // Glass Properties (Deep, blurred)
+    property real glassOpacity: 0.08
+    property real glassBorder: 0.15
+    property real glassShadow: 0.30
+
     // Motion
-    property QtObject motion: Calm {} // "Calm"
+    property QtObject motion: Calm {}
+    property int transitionFast: 200
+    property int transitionNormal: 360
+    property int transitionSlow: 600
+    property int easingType: Easing.OutCubic // Softer deceleration
     
-    // Gradient Support ("Premium Depth")
+    // Gradient Support
     property bool useGradient: true
-    property color gradientStart: "#18202A"   // Top glow
-    property color gradientCenter: "#121A24"  // Core graphite
-    property color gradientEnd: "#070B10"     // Bottom falloff
+    property color gradientStart: "#18202A"
+    property color gradientCenter: "#121A24"
+    property color gradientEnd: "#070B10"
     
-    // Orb Gradient (Subtle Radial Simulation)
-    property color orbGradientCenter: "#D8E6F3" // Lighter Center (Cool White-Blue)
-    property color orbGradientEdge: "#5A8BB0"   // Darker Edge (Muted Blue)
+    // Orb Gradient
+    property color orbGradientCenter: "#D8E6F3"
+    property color orbGradientEdge: "#5A8BB0"
 
     // Layout Structure
     property bool showSidebar: true
+    
+    // BMW-specific: Organic orb effects
+    property bool useGeometricOrb: false // Uses soft glow instead of tick marks
 }
+
