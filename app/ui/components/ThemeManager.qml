@@ -66,16 +66,16 @@ QtObject {
         ? wallpapers[activeWallpaperId].source : "ambient_sky.png"
     
     // ─────────────────────────────────────────────────────
-    // ADAPTIVE TEXT (based on wallpaper luminance)
+    // ADAPTIVE TEXT (cool, soft - never harsh white)
     // ─────────────────────────────────────────────────────
     property color primaryText: wallpaperLuminance > 0.6 
-        ? "#0A0A0A" : "#FFFFFF"
+        ? "#0A0A0A" : "#F4F6F8"   // Cool white, not harsh
     property color secondaryText: wallpaperLuminance > 0.6 
-        ? "#444444" : "#CCCCCC"
+        ? "#444444" : "#C9CED6"   // Soft steel
     property real textOpacityPrimary: wallpaperLuminance > 0.6 
         ? 0.9 : 0.95
     property real textOpacitySecondary: wallpaperLuminance > 0.6 
-        ? 0.6 : 0.5
+        ? 0.6 : 0.55
     
     // ─────────────────────────────────────────────────────
     // THEME CONTRACT (sacred - all themes must define these)

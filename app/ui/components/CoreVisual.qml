@@ -282,34 +282,50 @@ Item {
     }
 
     // ═══════════════════════════════════════════════════════
-    // MICRO-CONTEXT (Status text below orb)
+    // MICRO-CONTEXT (Status text below orb with backing)
     // ═══════════════════════════════════════════════════════
+    
+    // Backing strip for text anchoring
+    Rectangle {
+        anchors.top: orb.bottom
+        anchors.topMargin: 20
+        anchors.horizontalCenter: orb.horizontalCenter
+        width: 180
+        height: 56
+        radius: 28
+        color: Qt.rgba(0, 0, 0, 0.18)
+    }
+    
     Column {
         anchors.top: orb.bottom
         anchors.topMargin: 28
         anchors.horizontalCenter: orb.horizontalCenter
-        spacing: 6
+        spacing: 4
 
+        // Primary status (MUST POP)
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: listening ? "Listening" 
                 : thinking ? "Processing" 
                 : responding ? "Responding"
                 : "Ready"
-            font.pixelSize: 14
+            font.pixelSize: 20
             font.weight: Font.Medium
-            color: active ? Qt.rgba(1, 1, 1, 0.9) : Qt.rgba(1, 1, 1, 0.7)
+            opacity: 0.9
+            color: theme ? theme.primaryText : "#F4F6F8"
             font.family: theme ? theme.fontFamily : "Segoe UI"
         }
 
+        // Secondary hint
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: listening ? "Voice input active" 
                 : thinking ? "Neural core processing" 
                 : responding ? "Generating response"
                 : "Click to activate"
-            font.pixelSize: 11
-            color: Qt.rgba(1, 1, 1, 0.45)
+            font.pixelSize: 12
+            opacity: 0.6
+            color: theme ? theme.secondaryText : "#C9CED6"
             font.family: theme ? theme.fontFamily : "Segoe UI"
         }
     }

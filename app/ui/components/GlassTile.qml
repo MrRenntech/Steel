@@ -18,19 +18,23 @@ Item {
     property real uiScale: 1.0
     property string intent: ""
     property string statusHint: ""
-    property var theme: null  // Theme reference
+    property var theme: null
     
     signal clicked()
     
     // Theme-aware values
-    property int _radius: theme ? theme.tileRadius : 20
+    property int _radius: theme ? theme.tileRadius : 18
     property real _glassOpacity: theme ? theme.glassOpacity : 0.08
     property real _borderOpacity: theme ? theme.tileBorderOpacity : 0.15
     property real _shadowOpacity: theme ? theme.tileShadowOpacity : 0.30
     property int _transition: theme ? theme.transitionNormal : 360
+    
+    // Text colors (from theme adaptive system)
+    property color _primaryText: theme ? theme.primaryText : "#F4F6F8"
+    property color _secondaryText: theme ? theme.secondaryText : "#C9CED6"
 
     // ═══════════════════════════════════════════════════════
-    // TRUE GLASS PANEL (Theme-reactive)
+    // GLASS PANEL WITH CONTRAST LAYER
     // ═══════════════════════════════════════════════════════
     
     // Shadow layer
@@ -51,8 +55,15 @@ Item {
         anchors.fill: parent
         radius: _radius
         
-        // Glass color
-        color: Qt.rgba(1, 1, 1, highlighted ? _glassOpacity + 0.04 : _glassOpacity)
+        // CONTRAST LAYER - dark backing for text readability
+        color: Qt.rgba(0, 0, 0, 0.35)
+        
+        // Glass overlay on top
+        Rectangle {
+            anchors.fill: parent
+            radius: parent.radius
+            color: Qt.rgba(1, 1, 1, highlighted ? _glassOpacity + 0.04 : _glassOpacity)
+        }
         
         // Border
         border.width: 1
@@ -60,7 +71,6 @@ Item {
             ? Qt.rgba(1, 1, 1, _borderOpacity + 0.2)
             : Qt.rgba(1, 1, 1, _borderOpacity)
         
-        Behavior on color { ColorAnimation { duration: _transition } }
         Behavior on border.color { ColorAnimation { duration: _transition } }
         Behavior on radius { NumberAnimation { duration: _transition } }
         
@@ -69,39 +79,40 @@ Item {
             anchors.fill: parent
             radius: parent.radius
             gradient: Gradient {
-                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.12) }
-                GradientStop { position: 0.15; color: Qt.rgba(1, 1, 1, 0.04) }
+                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.08) }
+                GradientStop { position: 0.15; color: Qt.rgba(1, 1, 1, 0.03) }
                 GradientStop { position: 1.0; color: "transparent" }
             }
         }
     }
     
-    // Top edge highlight (glass refraction simulation)
+    // Top edge highlight (glass refraction)
     Rectangle {
         width: parent.width - 40
         height: 1
         anchors.horizontalCenter: parent.horizontalCenter
         y: 1
         radius: 1
+        opacity: 0.6
         gradient: Gradient {
             orientation: Gradient.Horizontal
             GradientStop { position: 0.0; color: "transparent" }
-            GradientStop { position: 0.3; color: Qt.rgba(1, 1, 1, 0.4) }
-            GradientStop { position: 0.7; color: Qt.rgba(1, 1, 1, 0.4) }
+            GradientStop { position: 0.3; color: Qt.rgba(1, 1, 1, 0.3) }
+            GradientStop { position: 0.7; color: Qt.rgba(1, 1, 1, 0.3) }
             GradientStop { position: 1.0; color: "transparent" }
         }
     }
 
     // ═══════════════════════════════════════════════════════
-    // CONTENT LAYER (Z-3)
+    // CONTENT LAYER
     // ═══════════════════════════════════════════════════════
     
     // Icon (subtle, top-right)
     Image {
         source: root.icon
-        width: 20 * root.uiScale
-        height: 20 * root.uiScale
-        opacity: 0.5
+        width: 18 * root.uiScale
+        height: 18 * root.uiScale
+        opacity: 0.4
         anchors.top: parent.top
         anchors.topMargin: 16
         anchors.right: parent.right
@@ -110,59 +121,65 @@ Item {
         mipmap: true
     }
     
-    // Status hint (micro-content, top-right below icon)
+    // Status hint (micro-content, top-right)
     Text {
         visible: root.statusHint !== ""
         text: root.statusHint
         font.pixelSize: 9
         font.weight: Font.Medium
         font.letterSpacing: 0.8
-        color: theme.colorSuccess
-        opacity: 0.8
+        color: theme ? theme.colorSuccess : "#4A7A68"
+        opacity: 0.9
         anchors.top: parent.top
-        anchors.topMargin: 40
+        anchors.topMargin: 38
         anchors.right: parent.right
         anchors.rightMargin: 16
-        font.family: theme.fontFamily
+        font.family: theme ? theme.fontFamily : "Segoe UI"
     }
 
-    // Main content column
+    // Main content column with TEXT HIERARCHY
     Column {
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.margins: 20
-        spacing: 6
+        spacing: 4
 
-        // Category/Label (micro text)
+        // TIER 1: Label (small, subdued)
         Text {
             text: root.title
             font.pixelSize: 11
             font.weight: Font.Medium
-            font.letterSpacing: 1.6
+            font.letterSpacing: 1.4
             font.capitalization: Font.AllUppercase
-            opacity: 0.5
-            color: "white"
-            font.family: theme.fontFamily
+            opacity: 0.65
+            color: _secondaryText
+            font.family: theme ? theme.fontFamily : "Segoe UI"
         }
 
-        // Primary Value (main focus)
+        // TIER 2: Primary Value (MUST POP)
         Text {
             text: root.value
-            font.pixelSize: 22
+            font.pixelSize: 26
             font.weight: Font.DemiBold
-            opacity: 0.95
-            color: "white"
-            font.family: theme.fontFamily
+            opacity: 1.0
+            color: _primaryText
+            font.family: theme ? theme.fontFamily : "Segoe UI"
+            
+            // Micro shadow for edge definition
+            layer.enabled: true
+            layer.effect: Item {
+                // Simple shadow approximation without QtGraphicalEffects
+            }
         }
 
-        // Subtitle (contextual info)
+        // TIER 3: Metadata (quiet, readable)
         Text {
             text: root.subtitle
-            font.pixelSize: 11
+            font.pixelSize: 12
             font.weight: Font.Normal
-            opacity: 0.4
-            color: "white"
-            font.family: theme.fontFamily
+            opacity: 0.55
+            color: _secondaryText
+            font.family: theme ? theme.fontFamily : "Segoe UI"
             visible: root.subtitle !== ""
         }
     }
@@ -171,18 +188,15 @@ Item {
     // INTERACTION (Theme-Aware)
     // ═══════════════════════════════════════════════════════
     
-    // Theme interaction properties
     property real _hoverLift: theme && theme.themes[theme.activeThemeId].tileHoverLift !== undefined 
         ? theme.themes[theme.activeThemeId].tileHoverLift : 0
     property real _pressScale: theme && theme.themes[theme.activeThemeId].tilePressScale !== undefined 
         ? theme.themes[theme.activeThemeId].tilePressScale : 0.97
     property int _fastTransition: theme ? theme.transitionFast : 150
     
-    // State tracking
     property bool _hovered: false
     property bool _pressed: false
     
-    // Transform for hover lift
     transform: Translate {
         y: _hovered ? -_hoverLift : 0
         Behavior on y { 
@@ -193,7 +207,6 @@ Item {
         }
     }
     
-    // Scale for press
     scale: _pressed ? _pressScale : 1.0
     Behavior on scale { 
         NumberAnimation { 
@@ -219,17 +232,16 @@ Item {
 
         onEntered: {
             _hovered = true
-            // Audi: just lift. BMW: glow brighter.
             if (_hoverLift === 0) {
-                glassPanel.color = Qt.rgba(1, 1, 1, _glassOpacity + 0.06)
+                glassPanel.color = Qt.rgba(0, 0, 0, 0.40)
             } else {
-                glassPanel.color = Qt.rgba(1, 1, 1, _glassOpacity + 0.02)
+                glassPanel.color = Qt.rgba(0, 0, 0, 0.38)
             }
             glassPanel.border.color = Qt.rgba(1, 1, 1, _borderOpacity + 0.15)
         }
         onExited: {
             _hovered = false
-            glassPanel.color = Qt.rgba(1, 1, 1, highlighted ? _glassOpacity + 0.04 : _glassOpacity)
+            glassPanel.color = Qt.rgba(0, 0, 0, 0.35)
             glassPanel.border.color = Qt.rgba(1, 1, 1, highlighted ? _borderOpacity + 0.2 : _borderOpacity)
         }
         onPressed: _pressed = true
