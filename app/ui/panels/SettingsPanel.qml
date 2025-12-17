@@ -310,6 +310,49 @@ Item {
                             }
                         }
                     }
+                    
+                    // Bentley Theme option
+                    Rectangle {
+                        width: 120
+                        height: 80
+                        radius: 12
+                        color: theme && theme.activeThemeId === "bentley" 
+                            ? Qt.rgba(0.4, 0.9, 1.0, 0.15) 
+                            : Qt.rgba(1, 1, 1, 0.06)
+                        border.width: theme && theme.activeThemeId === "bentley" ? 2 : 1
+                        border.color: theme && theme.activeThemeId === "bentley" 
+                            ? Qt.rgba(0.4, 0.9, 1.0, 0.6)
+                            : Qt.rgba(1, 1, 1, 0.15)
+                        
+                        Column {
+                            anchors.centerIn: parent
+                            spacing: 4
+                            Text {
+                                text: "BENTLEY"
+                                font.pixelSize: 14
+                                font.weight: Font.Medium
+                                color: Qt.rgba(1, 1, 1, 0.9)
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                font.family: theme ? theme.fontFamily : "Segoe UI"
+                            }
+                            Text {
+                                text: "Elegant, luxurious"
+                                font.pixelSize: 10
+                                color: Qt.rgba(1, 1, 1, 0.5)
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                font.family: theme ? theme.fontFamily : "Segoe UI"
+                            }
+                        }
+                        
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                console.log("Switching to Bentley theme")
+                                if(root.theme) root.theme.setTheme("bentley")
+                            }
+                        }
+                    }
                 }
             }
             
@@ -501,6 +544,45 @@ Item {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             onClicked: if(root.theme) root.theme.setTheme("audi")
+                        }
+                    }
+
+                    // Bentley Font (Playfair Display)
+                    Rectangle {
+                        width: 100
+                        height: 60
+                        radius: 8
+                        color: theme && theme.fontFamily.indexOf("Playfair") !== -1 
+                            ? Qt.rgba(0.4, 0.9, 1.0, 0.15) 
+                            : Qt.rgba(1, 1, 1, 0.06)
+                        border.width: theme && theme.fontFamily.indexOf("Playfair") !== -1 ? 2 : 1
+                        border.color: theme && theme.fontFamily.indexOf("Playfair") !== -1 
+                            ? Qt.rgba(0.4, 0.9, 1.0, 0.6)
+                            : Qt.rgba(1, 1, 1, 0.15)
+                        
+                        Column {
+                            anchors.centerIn: parent
+                            spacing: 2
+                            Text {
+                                text: "Playfair"
+                                font.pixelSize: 14
+                                font.weight: Font.Normal
+                                font.family: "Playfair Display, Georgia, serif"
+                                color: Qt.rgba(1, 1, 1, 0.9)
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                            Text {
+                                text: "BENTLEY"
+                                font.pixelSize: 9
+                                color: Qt.rgba(1, 1, 1, 0.5)
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                        }
+                        
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: if(root.theme) root.theme.setTheme("bentley")
                         }
                     }
                 }

@@ -301,6 +301,75 @@ QtObject {
             
             // Adaptive text behavior
             adaptiveText: true
+        },
+        
+        "bentley": {
+            // Identity
+            id: "bentley",
+            name: "BENTLEY",
+            description: "Elegant, luxurious",
+            
+            // Typography (Playfair Display - classic luxury)
+            fontFamily: "Playfair Display, Georgia, serif",
+            fontWeightPrimary: Font.Normal,
+            fontWeightSecondary: Font.Normal,
+            fontSizeH1: 34,
+            fontSizeH2: 26,
+            fontSizeBody: 15,
+            letterSpacing: 0.4,
+            textTransform: "none",
+            
+            // Geometry (REFINED, CLASSIC)
+            tileRadius: 12,
+            tileBlur: 0.06,
+            tileBorderOpacity: 0.12,
+            tileShadowOpacity: 0.25,
+            radiusPanel: 20,
+            padding: 28,
+            
+            // Tile Interaction (GRACEFUL)
+            tileHoverLift: 0,
+            tilePressScale: 0.98,
+            tileBreathingEnabled: true,
+            
+            // Colors (WARM LUXURY - British Racing Green + Gold)
+            accentColor: "#C9A962",          // Bentley Gold
+            backgroundColor: "#0D1210",       // Deep forest
+            colorSuccess: "#6B8E5A",          // Sage green
+            colorWarning: "#D4A853",          // Amber gold
+            colorError: "#A65454",            // Muted red
+            backgroundContrast: 0.65,
+            
+            // Glass (RICH DEPTH)
+            glassOpacity: 0.10,
+            glassBorder: 0.12,
+            glassShadow: 0.35,
+            
+            // Motion (STATELY, UNHURRIED)
+            motionProfile: "stately",
+            transitionFast: 250,
+            transitionNormal: 500,
+            transitionSlow: 800,
+            easingType: Easing.InOutQuad,
+            
+            // Orb (JEWEL-LIKE)
+            orbStyle: "organic",
+            useGeometricOrb: false,
+            orbGlowIntensity: 0.25,
+            orbPulseSpeed: 6000,
+            orbSegments: 0,
+            orbRingGap: 0,
+            
+            // Gradients (WARM)
+            useGradient: true,
+            gradientStart: "#1A1F1A",
+            gradientCenter: "#0D1210",
+            gradientEnd: "#050807",
+            orbGradientCenter: "#F5EED9",
+            orbGradientEdge: "#C9A962",
+            
+            // Adaptive text behavior
+            adaptiveText: true
         }
     })
     
