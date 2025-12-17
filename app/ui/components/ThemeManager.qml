@@ -169,66 +169,66 @@ QtObject {
             // Identity
             id: "bmw",
             name: "BMW",
-            description: "Soft, organic",
+            description: "Clean, technical",
             
-            // Typography (BMW Type Next style → Inter fallback)
-            fontFamily: "Inter, Segoe UI",
+            // Typography (BMW Type Next style -> Inter/Arial)
+            fontFamily: "Inter, Helvetica, Arial, sans-serif",
             fontWeightPrimary: Font.Medium,
             fontWeightSecondary: Font.Normal,
-            fontSizeH1: 32,
-            fontSizeH2: 24,
-            fontSizeBody: 14,
-            letterSpacing: 1.2,
+            fontSizeH1: 26,
+            fontSizeH2: 18,
+            fontSizeBody: 12,
+            letterSpacing: 0,
             textTransform: "none",
             
-            // Geometry (SOFT EDGES)
+            // Geometry (SOFT)
             tileRadius: 18,
-            tileBlur: 0.08,
+            tileBlur: 0,
             tileBorderOpacity: 0.15,
             tileShadowOpacity: 0.30,
-            radiusPanel: 28,
+            radiusPanel: 24,
             padding: 24,
             
-            // Tile Interaction (ORGANIC)
+            // Interaction (ORGANIC)
             tileHoverLift: 0,
             tilePressScale: 0.97,
             tileBreathingEnabled: true,
             
-            // Colors
-            accentColor: "#6FAED9",
-            backgroundColor: "#0E141B",
-            colorSuccess: "#4A7A68",
-            colorWarning: "#BF9E60",
-            colorError: "#8C2F2F",
-            backgroundContrast: 0.7,
+            // Colors (NEUTRAL)
+            accentColor: "#2E86C1",
+            backgroundColor: "#000000",
+            colorSuccess: "#66BB6A",
+            colorWarning: "#FFA726",
+            colorError: "#EF5350",
+            backgroundContrast: 1.0,
             
-            // Glass (DEEP)
+            // Glass (SOFT GLOW)
             glassOpacity: 0.08,
             glassBorder: 0.15,
             glassShadow: 0.30,
             
-            // Motion (CALM)
-            motionProfile: "calm",
-            transitionFast: 200,
-            transitionNormal: 420,
+            // Motion (ORGANIC)
+            motionProfile: "organic",
+            transitionFast: 180,
+            transitionNormal: 420,  // Slower, breathing
             transitionSlow: 600,
             easingType: Easing.OutCubic,
             
-            // Orb (ORGANIC SOUL)
+            // Orb (ORGANIC FLUID)
             orbStyle: "organic",
             useGeometricOrb: false,
             orbGlowIntensity: 0.3,
-            orbPulseSpeed: 5000,
+            orbPulseSpeed: 4000,
             orbSegments: 0,
             orbRingGap: 0,
             
             // Gradients
             useGradient: true,
-            gradientStart: "#18202A",
-            gradientCenter: "#121A24",
-            gradientEnd: "#070B10",
-            orbGradientCenter: "#D8E6F3",
-            orbGradientEdge: "#5A8BB0",
+            gradientStart: "#141414",
+            gradientCenter: "#0A0A0A",
+            gradientEnd: "#000000",
+            orbGradientCenter: "#A0D8EF",
+            orbGradientEdge: "#2E86C1",
             
             // Adaptive text behavior
             adaptiveText: true
@@ -240,8 +240,8 @@ QtObject {
             name: "AUDI",
             description: "Sharp, technical",
             
-            // Typography (Audi Type Extended style → Montserrat fallback)
-            fontFamily: "Montserrat, Segoe UI",
+            // Typography (Audi Type Extended style -> Montserrat/Verdana)
+            fontFamily: "Montserrat, Verdana, sans-serif",
             fontWeightPrimary: Font.Light,
             fontWeightSecondary: Font.ExtraLight,
             fontSizeH1: 26,
@@ -309,8 +309,8 @@ QtObject {
             name: "BENTLEY",
             description: "Elegant, luxurious",
             
-            // Typography (Playfair Display - classic luxury)
-            fontFamily: "Playfair Display, Georgia, serif",
+            // Typography (Playfair Display -> Georgia/Times)
+            fontFamily: "Playfair Display, Georgia, Times New Roman, serif",
             fontWeightPrimary: Font.Normal,
             fontWeightSecondary: Font.Normal,
             fontSizeH1: 34,
