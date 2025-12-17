@@ -10,15 +10,38 @@ Window {
     width: 1280
     height: 800
     visible: true
-    title: "Steel v6.4 Refactored"
+    title: "Steel OS v6.8"
     color: "black"
+    
+    // ═══════════════════════════════════════════════════════
+    // NAVIGATION STATE (Single Source of Truth)
+    // ═══════════════════════════════════════════════════════
     property string activeTab: "HOME"
-    property alias appTheme: theme
-
-    // Theme Engine
-    ThemeLoader {
-        id: theme
+    
+    // Navigation index mapping
+    property var tabIndex: ({
+        "HOME": 0,
+        "ASSISTANT": 1,
+        "SYSTEM": 2,
+        "NETWORK": 3,
+        "SETTINGS": 4
+    })
+    
+    function navigateTo(tab) {
+        if (tabIndex[tab] !== undefined) {
+            activeTab = tab
+        }
     }
+
+    // ═══════════════════════════════════════════════════════
+    // THEME MANAGER (Central Authority)
+    // ═══════════════════════════════════════════════════════
+    ThemeManager {
+        id: themeManager
+    }
+    
+    // Alias for components
+    property alias theme: themeManager
 
     UIContext {
         id: ui
@@ -28,28 +51,31 @@ Window {
     onWidthChanged: ui.update(root)
     onHeightChanged: ui.update(root)
 
-    // Background: Ambient Atmosphere (Light-leaning)
+    // ═══════════════════════════════════════════════════════
+    // LAYER 0: BACKGROUND
+    // ═══════════════════════════════════════════════════════
     BackgroundField {
         id: backgroundLayer
         anchors.fill: parent
         z: 0
         assistantState: (app && app.assistantState) ? app.assistantState : "IDLE"
-        currentWallpaper: (app && app.currentWallpaper) ? app.currentWallpaper : "ambient_sky.png"
+        currentWallpaper: themeManager.wallpaperId
     }
 
-    // New Glass Top Bar (Status Strip)
+    // ═══════════════════════════════════════════════════════
+    // LAYER 1: TOP BAR (Navigation)
+    // ═══════════════════════════════════════════════════════
     Rectangle {
         id: topBar
-        height: 64 // Thin strip
+        height: 64
         width: parent.width
         anchors.top: parent.top
-        z: 100 // Always on top
+        z: 100
 
-        color: Qt.rgba(10/255, 18/255, 28/255, 0.6) // Glassy
+        color: Qt.rgba(10/255, 18/255, 28/255, 0.6)
         border.color: Qt.rgba(1,1,1,0.08)
         border.width: 1
 
-        // Horizontal Line at bottom
         Rectangle {
             anchors.bottom: parent.bottom
             width: parent.width
@@ -64,31 +90,28 @@ Window {
             font.weight: Font.Black
             color: "white"
             opacity: 0.9
-            font.letterSpacing: 4.0 // Corrected
+            font.letterSpacing: 4.0
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: 32
-            font.family: theme.fontFamily
+            font.family: themeManager.fontFamily
         }
 
+        // NAVIGATION TABS
         Row {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: 160
             spacing: 42
 
-            // ═══════════════════════════════════════════════════════
-            // NAVIGATION MODEL (Single Source of Truth)
-            // ═══════════════════════════════════════════════════════
             Repeater {
                 model: ["HOME", "ASSISTANT", "SYSTEM", "NETWORK", "SETTINGS"]
 
                 delegate: Item {
                     property bool active: root.activeTab === modelData
                     width: textItem.implicitWidth + 12
-                    height: parent.height
+                    height: topBar.height
                     
-                    // Tab Label
                     Text {
                         id: textItem
                         text: modelData
@@ -96,84 +119,64 @@ Window {
                         anchors.verticalCenterOffset: -2
                         font.pixelSize: 13
                         font.bold: true
-                        color: active ? "white" : "white"
-                        opacity: active ? 1.0 : 0.4 // Fade inactive
-                        font.letterSpacing: 2.0 // Automotive wide
-                        font.family: theme.fontFamily
-                    }
-
-                    // Glow Underline
-                    Rectangle {
-                        width: active ? parent.width : 0
-                        height: 2
-                        radius: 1
-                        anchors.bottom: parent.bottom
-                        color: theme.accentColor
-                        opacity: active ? 1.0 : 0.0
+                        font.letterSpacing: 1.2
+                        color: active ? themeManager.primaryColor : Qt.rgba(1,1,1,0.5)
+                        font.family: themeManager.fontFamily
                         
-                        // Fake Glow (Shadow)
-                        Rectangle {
-                            anchors.centerIn: parent
-                            width: parent.width + 4
-                            height: 6
-                            radius: 3
-                            color: theme.accentColor
-                            opacity: 0.4
-                        }
-
-                        Behavior on width {
-                            NumberAnimation { duration: 240; easing.type: Easing.OutCubic }
+                        Behavior on color { 
+                            ColorAnimation { duration: themeManager.transitionFast } 
                         }
                     }
-
+                    
+                    Rectangle {
+                        anchors.bottom: parent.bottom
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width
+                        height: 2
+                        color: themeManager.accentColor
+                        opacity: active ? 1 : 0
+                        
+                        Behavior on opacity { 
+                            NumberAnimation { duration: themeManager.transitionFast } 
+                        }
+                    }
+                    
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: root.activeTab = modelData
                         cursorShape: Qt.PointingHandCursor
+                        onClicked: root.navigateTo(modelData)
                     }
                 }
             }
         }
 
-        // Right-side Status
+        // STATUS
         Row {
             anchors.right: parent.right
             anchors.rightMargin: 32
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 24
-
-            Text {
-                text: Qt.formatDateTime(new Date(), "hh:mm")
-                font.pixelSize: 14
-                opacity: 0.8
-                color: "white"
-                font.family: theme.fontFamily
-                font.bold: true
-            }
-
+            spacing: 12
+            
             Rectangle {
-                width: 1
-                height: 12
-                color: "white"
-                opacity: 0.2
-                anchors.verticalCenter: parent.verticalCenter
+                width: 8
+                height: 8
+                radius: 4
+                color: themeManager.colorSuccess
             }
-
+            
             Text {
                 text: "ONLINE"
                 font.pixelSize: 11
-                color: theme.colorSuccess
+                color: themeManager.colorSuccess
                 font.letterSpacing: 1.2
-                font.family: theme.fontFamily
-                // Subtle glow/pulse?
+                font.family: themeManager.fontFamily
                 font.bold: true
             }
         }
     }
 
     // ═══════════════════════════════════════════════════════
-    // MAIN CONTENT AREA (Between Top Bar and Bottom Bar)
-    // Split: 65% Left (Tiles) / 35% Right (AI Core)
+    // LAYER 2: MAIN CONTENT (StackLayout + AI Core)
     // ═══════════════════════════════════════════════════════
     Row {
         id: mainContent
@@ -182,37 +185,60 @@ Window {
         anchors.left: parent.left
         anchors.right: parent.right
 
-        // LEFT CONTENT ZONE (65%)
+        // LEFT: CONTENT STACK (65%)
         Rectangle {
             width: parent.width * 0.65
             height: parent.height
             color: "transparent"
 
-            TabContainer {
-                id: tabContainer
+            StackLayout {
+                id: contentStack
                 anchors.fill: parent
-                activeTab: root.activeTab
-                theme: theme
-                onRequestNavigation: function(tab) { root.activeTab = tab }
+                currentIndex: tabIndex[activeTab] || 0
+
+                // Panel 0: HOME
+                AssistantPanel { 
+                    theme: themeManager
+                    onNavigateTo: function(tab) { root.navigateTo(tab) }
+                }
+                
+                // Panel 1: ASSISTANT
+                MediaPanel { theme: themeManager }
+                
+                // Panel 2: SYSTEM
+                VehiclePanel { theme: themeManager }
+                
+                // Panel 3: NETWORK
+                NavPanel { theme: themeManager }
+                
+                // Panel 4: SETTINGS
+                SettingsPanel { 
+                    theme: themeManager
+                    onNavigateTo: function(tab) { root.navigateTo(tab) }
+                }
             }
         }
 
-        // RIGHT AI CORE ZONE (35%)
+        // RIGHT: AI CORE ZONE (35%)
         Rectangle {
             width: parent.width * 0.35
             height: parent.height
             color: "transparent"
 
-            // Light Glass Container
+            // Glass Container
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: 16
                 anchors.bottomMargin: 8
-                radius: 28
+                radius: themeManager.radiusPanel
                 
-                color: Qt.rgba(1, 1, 1, 0.06)
+                color: Qt.rgba(1, 1, 1, themeManager.glassOpacity)
                 border.width: 1
-                border.color: Qt.rgba(1, 1, 1, 0.15)
+                border.color: Qt.rgba(1, 1, 1, themeManager.glassBorder)
+                
+                Behavior on radius { 
+                    NumberAnimation { duration: themeManager.transitionNormal } 
+                }
                 
                 // Shadow
                 Rectangle {
@@ -222,7 +248,7 @@ Window {
                     anchors.rightMargin: -3
                     anchors.bottomMargin: -10
                     radius: parent.radius + 4
-                    color: Qt.rgba(0, 0, 0, 0.3)
+                    color: Qt.rgba(0, 0, 0, themeManager.glassShadow)
                     z: -1
                 }
             }
@@ -231,7 +257,7 @@ Window {
                 id: core
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: -20
-                theme: root.appTheme
+                theme: themeManager
                 assistantState: (app && app.assistantState) ? app.assistantState : "IDLE"
                 activeTab: root.activeTab
                 audioLevel: (app && app.audioLevel) ? app.audioLevel : 0.0
@@ -248,7 +274,7 @@ Window {
     }
 
     // ═══════════════════════════════════════════════════════
-    // BOTTOM CONTEXT BAR (Hints, Mic, Actions)
+    // LAYER 3: BOTTOM CONTEXT BAR
     // ═══════════════════════════════════════════════════════
     Rectangle {
         id: bottomBar
@@ -261,7 +287,6 @@ Window {
         border.color: Qt.rgba(1, 1, 1, 0.08)
         border.width: 1
         
-        // Top border line
         Rectangle {
             anchors.top: parent.top
             width: parent.width
@@ -275,7 +300,7 @@ Window {
             anchors.rightMargin: 32
             spacing: 24
             
-            // Left: Context hint
+            // Context hint
             Column {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 2
@@ -292,25 +317,24 @@ Window {
                     font.pixelSize: 13
                     font.weight: Font.Medium
                     color: Qt.rgba(1, 1, 1, 0.8)
-                    font.family: theme.fontFamily
+                    font.family: themeManager.fontFamily
                 }
                 
                 Text {
                     text: "Click orb or press Space to activate voice"
                     font.pixelSize: 10
                     color: Qt.rgba(1, 1, 1, 0.4)
-                    font.family: theme.fontFamily
+                    font.family: themeManager.fontFamily
                 }
             }
             
             Item { width: 1; Layout.fillWidth: true }
             
-            // Right: Mic level indicator
+            // Mic level indicator
             Row {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 8
                 
-                // Mic bars
                 Repeater {
                     model: 5
                     Rectangle {
@@ -323,7 +347,7 @@ Window {
                         radius: 1.5
                         color: {
                             var level = (app && app.audioLevel) ? app.audioLevel : 0
-                            return level > 0.3 ? Qt.rgba(0.4, 0.9, 1.0, 0.8) : Qt.rgba(1, 1, 1, 0.3)
+                            return level > 0.3 ? themeManager.accentColor : Qt.rgba(1, 1, 1, 0.3)
                         }
                         anchors.verticalCenter: parent.verticalCenter
                         
@@ -337,12 +361,11 @@ Window {
                     font.pixelSize: 9
                     font.letterSpacing: 1.0
                     color: Qt.rgba(1, 1, 1, 0.4)
-                    font.family: theme.fontFamily
+                    font.family: themeManager.fontFamily
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
             
-            // Separator
             Rectangle {
                 width: 1
                 height: 24
@@ -350,29 +373,26 @@ Window {
                 anchors.verticalCenter: parent.verticalCenter
             }
             
-            // Version
             Text {
-                text: "v6.5"
+                text: "v6.8"
                 font.pixelSize: 10
                 color: Qt.rgba(1, 1, 1, 0.3)
-                font.family: theme.fontFamily
+                font.family: themeManager.fontFamily
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
     }
 
     // ═══════════════════════════════════════════════════════
-    // WALLPAPER PANEL OVERLAY
+    // LAYER 4: OVERLAYS (Modal Panels)
     // ═══════════════════════════════════════════════════════
     WallpaperPanel {
         id: wallpaperPanel
         z: 200
-        theme: root.appTheme
+        theme: themeManager
     }
     
-    // Function to open wallpaper panel (call from settings tile)
     function openWallpaperPanel() {
         wallpaperPanel.show()
     }
-
 }

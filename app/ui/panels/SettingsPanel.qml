@@ -230,11 +230,11 @@ Item {
                         width: 120
                         height: 80
                         radius: 12
-                        color: theme && theme.themeName === "bmw" 
+                        color: theme && theme.activeThemeId === "bmw" 
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.15) 
                             : Qt.rgba(1, 1, 1, 0.06)
-                        border.width: theme && theme.themeName === "bmw" ? 2 : 1
-                        border.color: theme && theme.themeName === "bmw" 
+                        border.width: theme && theme.activeThemeId === "bmw" ? 2 : 1
+                        border.color: theme && theme.activeThemeId === "bmw" 
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.6)
                             : Qt.rgba(1, 1, 1, 0.15)
                         
@@ -273,11 +273,11 @@ Item {
                         width: 120
                         height: 80
                         radius: 12
-                        color: theme && theme.themeName === "audi" 
+                        color: theme && theme.activeThemeId === "audi" 
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.15) 
                             : Qt.rgba(1, 1, 1, 0.06)
-                        border.width: theme && theme.themeName === "audi" ? 2 : 1
-                        border.color: theme && theme.themeName === "audi" 
+                        border.width: theme && theme.activeThemeId === "audi" ? 2 : 1
+                        border.color: theme && theme.activeThemeId === "audi" 
                             ? Qt.rgba(0.4, 0.9, 1.0, 0.6)
                             : Qt.rgba(1, 1, 1, 0.15)
                         
