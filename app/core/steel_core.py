@@ -1,11 +1,15 @@
 from PySide6.QtCore import QObject, QTimer, Slot
 from .app_state import AppState
+from .command_router import CommandRouter
 
 
 class SteelCore(QObject):
     def __init__(self, app_state: AppState):
         super().__init__()
         self.app_state = app_state
+        
+        # Initialize command router
+        self.router = CommandRouter(app_state)
         
         # Connect to state changes
         self.app_state.assistantStateChanged.connect(self.on_state_changed)
@@ -20,11 +24,31 @@ class SteelCore(QObject):
         
         if current_state == "LISTENING":
             self.start_listening_flow()
+        elif current_state == "PROCESSING":
+            # Route the command when entering PROCESSING state
+            self.process_voice_command()
         elif current_state == "IDLE":
             # Cancel any pending operations if user reset
             if self.processing_timer.isActive():
                 print("[SteelCore] Operation cancelled by user.")
                 self.processing_timer.stop()
+    
+    def process_voice_command(self):
+        """Process voice command when PROCESSING state is entered."""
+        # Get the transcript (currently using partial_transcript from app_state)
+        # In real implementation, this would come from STT
+        transcript = self.app_state.partialTranscript
+        
+        print(f"[SteelCore] Processing command: '{transcript}'")
+        
+        # Route the command
+        matched = self.router.handle_command(transcript)
+        
+        # Transition to RESPONDING then IDLE
+        self.app_state.set_state("RESPONDING")
+        self.processing_timer.timeout.disconnect() if self.processing_timer.receivers(self.processing_timer.timeout) > 0 else None
+        self.processing_timer.timeout.connect(self.transition_to_idle)
+        self.processing_timer.start(1500)  # Brief response state
             
     def start_listening_flow(self):
         try:

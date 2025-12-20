@@ -49,6 +49,7 @@ class AppState(QObject):
     lastIntentChanged = Signal()
     confidenceChanged = Signal()
     wallpaperChanged = Signal()
+    reloadUIRequested = Signal()  # Signal for UI reload command
 
     # Properties
     @Property(str, notify=statusChanged)
@@ -97,6 +98,14 @@ class AppState(QObject):
         self.set_state("PRE_LISTEN")
         self.silence_duration = 0.0
 
+    @Slot(str)
+    def set_transcript(self, text):
+        """Set the transcript text (from voice recognition or for testing)."""
+        if self._partial_transcript != text:
+            self._partial_transcript = text
+            self.transcriptChanged.emit()
+            self.log(f"Transcript: {text}")
+
     @Slot(str, float)
     def set_intent(self, intent, confidence):
         if self._last_intent != intent or self._confidence != confidence:
@@ -143,6 +152,12 @@ class AppState(QObject):
             
         next_idx = (curr_idx + 1) % len(themes)
         self.set_theme(themes[next_idx])
+
+    @Slot()
+    def request_reload_ui(self):
+        """Emit signal to request UI reload."""
+        self.log("UI reload requested")
+        self.reloadUIRequested.emit()
 
     @Slot(str)
     def log(self, message):
