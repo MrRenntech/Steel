@@ -1,52 +1,26 @@
 === STEEL SESSION STARTED ===
-State changed to: IDLE
-State changed to: PRE_LISTEN
-State changed to: HOLDING
 State changed to: PRE_LISTEN
 State changed to: LISTENING
-State changed to: LISTENING
-State changed to: HOLDING
-State changed to: HOLDING
-[SPEAK] I didn't catch that.
-State changed to: RESPONDING
-[SPEAK] I didn't catch that.
-State changed to: RESPONDING
-State changed to: PROCESSING
-State changed to: PROCESSING
-State changed to: IDLE
-State changed to: THINKING
-State changed to: RESPONDING
-State changed to: IDLE
-State changed to: IDLE
-State changed to: PRE_LISTEN
-State changed to: HOLDING
-State changed to: LISTENING
-State changed to: PRE_LISTEN
-State changed to: LISTENING
-State changed to: HOLDING
-State changed to: HOLDING
-State changed to: LISTENING
-State changed to: LISTENING
-State changed to: HOLDING
-State changed to: HOLDING
-State changed to: THINKING
-[SPEAK] I didn't catch that.
-State changed to: RESPONDING
-State changed to: PROCESSING
-State changed to: RESPONDING
-State changed to: IDLE
-State changed to: IDLE
-State changed to: PRE_LISTEN
-State changed to: PRE_LISTEN
-State changed to: LISTENING
-State changed to: LISTENING
-State changed to: HOLDING
 State changed to: HOLDING
 [SPEAK] I didn't catch that.
 State changed to: RESPONDING
 State changed to: PROCESSING
-[SPEAK] I didn't catch that.
+State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: HOLDING
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: hell
+[SPEAK] I didn't understand that yet.
 State changed to: RESPONDING
 State changed to: PROCESSING
 State changed to: IDLE
-State changed to: THINKING
+State changed to: PRE_LISTEN
+State changed to: HOLDING
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: switch to our day
+[SPEAK] I didn't understand that yet.
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE

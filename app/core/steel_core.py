@@ -35,10 +35,11 @@ class SteelCore(QObject):
     
     def process_voice_command(self):
         """Process voice command when PROCESSING state is entered."""
-        # Get the transcript (currently using partial_transcript from app_state)
-        # In real implementation, this would come from STT
+        # Get the transcript (from Vosk via app_state)
         transcript = self.app_state.partialTranscript
         
+        # DEBUG: Print exactly what we're getting
+        print(f"[DEBUG] RAW TRANSCRIPT: '{transcript}'")
         print(f"[SteelCore] Processing command: '{transcript}'")
         
         # Route the command

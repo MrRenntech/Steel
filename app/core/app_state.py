@@ -265,5 +265,8 @@ class AppState(QObject):
                         self.set_state("HOLDING")
                 
                 elif self.silence_duration > 2.5:
+                    # CRITICAL: Stop speech FIRST to get final transcript
+                    # THEN transition to PROCESSING
+                    if hasattr(self, 'speech') and self.speech and self.speech.is_running:
+                        self.speech.stop()  # This updates _partial_transcript with final result
                     self.set_state("PROCESSING")
-                    # In a real app, this is where STT would finalize
