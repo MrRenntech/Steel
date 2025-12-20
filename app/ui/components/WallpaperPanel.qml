@@ -17,6 +17,8 @@ Rectangle {
     visible: opacity > 0
     
     signal closed()
+    onOpacityChanged: console.log("WallpaperPanel opacity: " + opacity)
+    Component.onCompleted: console.log("WallpaperPanel loaded")
     
     // Show/hide with animation
     function show() { opacity = 1 }

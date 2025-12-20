@@ -1,10 +1,1 @@
 === STEEL SESSION STARTED ===
-State changed to: PRE_LISTEN
-State changed to: PRE_LISTEN
-State changed to: LISTENING
-State changed to: HOLDING
-State changed to: HOLDING
-State changed to: LISTENING
-State changed to: LISTENING
-State changed to: HOLDING
-State changed to: HOLDING

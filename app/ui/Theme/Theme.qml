@@ -213,4 +213,9 @@ QtObject {
             orbGradientCenter: "#F5EED9", orbGradientEdge: "#C9A962"
         }
     })
+
+    Component.onCompleted: {
+        console.log("Theme.qml loaded. Wallpapers: " + Object.keys(wallpapers).join(", "))
+        console.log("Active Wallpaper ID: " + activeWallpaperId)
+    }
 }
