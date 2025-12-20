@@ -39,7 +39,7 @@ REJECTIONS = ["no", "nah"]
 CONVERSATION_TRIGGERS = ["let's talk", "talk to me", "conversation mode"]
 
 # Initiative settings
-INITIATIVE_IDLE_THRESHOLD = 30.0  # seconds of idle before initiative
+INITIATIVE_IDLE_THRESHOLD = 6.0  # seconds of idle before initiative (User Req 3.1)
 INITIATIVE_COOLDOWN = 600.0  # 10 minutes between initiatives
 
 
@@ -364,7 +364,7 @@ class CommandRouter:
         if current_theme and current_theme != preferred:
             def set_default():
                 self.persistent.set_immediate("preferred_theme", current_theme)
-                self.speak_intent(f"{current_theme.upper()} saved as default.")
+                self.speak_intent("Done.")  # User Req 3.4
             
             self._pending_suggestion_action = set_default
             return f"Want me to keep {current_theme} as default?"

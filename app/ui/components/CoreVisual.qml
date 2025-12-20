@@ -42,14 +42,24 @@ Item {
     
     // Mode helpers (for visual cues)
     property bool conversationMode: interactionMode === "CONVERSATION"
-    
+    property string assistantMode: {
+        if (idle) return "IDLE"
+        if (responding) return "SPEAKING"
+        return interactionMode
+    }
+
     // Reset orb rotation when thinking stops
     onThinkingChanged: {
         if (!thinking) orb.rotation = 0
     }
 
-    // Dynamic Opacity
-    opacity: activeTab === "CORE" ? 1.0 : 0.35
+    // Dynamic Opacity (User Req 2.4)
+    // - Idle: Dimmed (0.35) unless in Assistant tab
+    // - Active: 0.92 usually, 1.0 when Speaking
+    opacity: {
+        if (active) return (assistantMode === "SPEAKING" ? 1.0 : 0.92)
+        return (activeTab === "ASSISTANT") ? 1.0 : 0.35
+    }
     Behavior on opacity { NumberAnimation { duration: 600 } }
 
     // Theme helpers

@@ -12,15 +12,24 @@ Window {
     width: 1280
     height: 800
     visible: true
-    title: "Steel OS v7.0"
+    title: "Steel OS v6.6"
     color: "black"
     
     // ═══════════════════════════════════════════════════════
-    // NAVIGATION STATE (Single Source of Truth)
+    // VISUAL CONTROL SURFACE (User Req 2.1)
     // ═══════════════════════════════════════════════════════
     property string activeTab: "HOME"
     property bool assistantActive: (app && app.assistantState) ? app.assistantState !== "IDLE" : false
-    
+    property string interactionMode: (app && app.interactionMode) ? app.interactionMode : "COMMAND"
+    property string assistantState: (app && app.assistantState) ? app.assistantState : "IDLE"
+
+    // Mode Mapping (User Req 2.1)
+    property string assistantMode: {
+        if (assistantState === "IDLE") return "IDLE"
+        if (assistantState === "RESPONDING") return "SPEAKING"
+        return interactionMode // "COMMAND" or "CONVERSATION"
+    }
+        
     property var tabIndex: ({
         "HOME": 0,
         "ASSISTANT": 1,
@@ -34,30 +43,23 @@ Window {
             activeTab = tab
         }
     }
-
-    UIContext {
-        id: ui
-    }
     
-    // Global Theme is now accessed via 'Theme' singleton
-
-
+    UIContext { id: ui }
     Component.onCompleted: ui.update(root)
     onWidthChanged: ui.update(root)
     onHeightChanged: ui.update(root)
-    
-    // Current time
-
-
 
     // ═══════════════════════════════════════════════════════
-    // LAYER 0: BACKGROUND
+    // LAYER 0: BACKGROUND (Opacity modulated by Overlay)
+    // 
+    // NOTE: FastBlur removed due to missing QtGraphicalEffects module.
+    // Falling back to "Opacity alone is acceptable and premium".
     // ═══════════════════════════════════════════════════════
     BackgroundField {
         id: backgroundLayer
         anchors.fill: parent
         z: 0
-        assistantState: (app && app.assistantState) ? app.assistantState : "IDLE"
+        assistantState: root.assistantState
         currentWallpaper: Theme.wallpapers[Theme.activeWallpaperId] ? Theme.wallpapers[Theme.activeWallpaperId].source : "ambient_sky.png"
     }
 
@@ -305,12 +307,24 @@ Window {
     Rectangle {
         id: assistantOverlay
         anchors.fill: parent
-        color: Qt.rgba(0, 0, 0, 0.35)
-        opacity: assistantActive ? 1.0 : 0.0
-        visible: opacity > 0.01
+        color: "#000000"
+        
+        // Mode-based Opacity (User Req 2.2)
+        // CONVERSATION: 0.18 (Focused, private)
+        // COMMAND: 0.10 (Ready)
+        // IDLE: 0.0
+        property real targetOpacity: {
+            if (assistantMode === "CONVERSATION") return 0.18
+            if (assistantMode === "COMMAND") return 0.10
+            if (assistantMode === "SPEAKING") return (interactionMode === "CONVERSATION" ? 0.18 : 0.10)
+            return 0.0
+        }
+        
+        opacity: targetOpacity
+        visible: opacity > 0
         z: 300 // Above content, below Orb
         
-        Behavior on opacity { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+        Behavior on opacity { NumberAnimation { duration: 180 } } // User Req 2.2: 180ms
         
         // Block interaction with dashboard
         MouseArea {
