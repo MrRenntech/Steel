@@ -366,53 +366,55 @@ Item {
                     spacing: 12
                     
                     Repeater {
-                        model: [
-                            { name: "Ambient Sky", source: "ambient_sky.png", color: "#6FAED9" },
-                            { name: "Warm Dawn", source: "warm_dawn.png", color: "#E8A87C" },
-                            { name: "Glass Fog", source: "glass_fog.png", color: "#B0C4DE" },
-                            { name: "Soft Horizon", source: "soft_horizon.png", color: "#A8B0C0" }
-                        ]
+                        model: WallpaperModel {}
                         
                         delegate: Rectangle {
                             width: 140
                             height: 80
                             radius: 12
                             color: "transparent"
-                            border.width: Theme.activeWallpaperId === modelData.name.toLowerCase().replace(" ", "_") ? 2 : 1
-                            border.color: Theme.activeWallpaperId === modelData.name.toLowerCase().replace(" ", "_") 
+                            border.width: Theme.activeWallpaperId === model.source ? 2 : 1
+                            border.color: Theme.activeWallpaperId === model.source 
                                 ? Theme.accentColor 
                                 : Qt.rgba(1, 1, 1, 0.1)
                             
-                            // Preview Image (Placeholder color for now)
+                            // Real Preview Image
+                            Image {
+                                anchors.fill: parent
+                                anchors.margins: 4
+                                source: "../../assets/wallpapers/" + model.source
+                                fillMode: Image.PreserveAspectCrop
+                                opacity: 1.0
+                            }
+                            
+                            // Label Overlay
                             Rectangle {
                                 anchors.fill: parent
                                 anchors.margins: 4
                                 radius: 8
-                                color: modelData.color
+                                color: "transparent"
                                 gradient: Gradient {
-                                    GradientStop { position: 0.0; color: modelData.color }
-                                    GradientStop { position: 1.0; color: Qt.darker(modelData.color, 1.5) }
+                                    GradientStop { position: 0.6; color: "transparent" }
+                                    GradientStop { position: 1.0; color: Qt.rgba(0,0,0,0.7) }
                                 }
                             }
                             
                             // Label
                             Text {
-                                text: modelData.name
+                                text: model.name
                                 font.pixelSize: 10
                                 font.weight: Font.Medium
-                                color: Qt.rgba(1, 1, 1, 0.9)
+                                color: "#FFFFFF"
                                 anchors.bottom: parent.bottom
                                 anchors.left: parent.left
                                 anchors.margins: 8
                                 font.family: FontRegistry.current.name
-                                style: Text.Outline
-                                styleColor: Qt.rgba(0,0,0,0.5)
                             }
                             
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: Theme.setWallpaper(modelData.name.toLowerCase().replace(" ", "_"))
+                                onClicked: Theme.setWallpaper(model.source)
                             }
                         }
                     }
@@ -671,7 +673,7 @@ Item {
                         width: 100
                     }
                     Text {
-                        text: "6.5"
+                        text: "6.6"
                         font.pixelSize: 12
                         font.weight: Font.Medium
                         color: Qt.rgba(1, 1, 1, 0.9)
