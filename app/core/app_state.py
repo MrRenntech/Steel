@@ -7,6 +7,7 @@ class AssistantState(str, Enum):
     PRE_LISTEN = "PRE_LISTEN"
     LISTENING = "LISTENING"
     HOLDING = "HOLDING"
+    PROCESSING = "PROCESSING"  # Added - was missing!
     THINKING = "THINKING"
     RESPONDING = "RESPONDING"
     ERROR = "ERROR"

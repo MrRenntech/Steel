@@ -46,22 +46,21 @@ class SteelCore(QObject):
         
         # Transition to RESPONDING then IDLE
         self.app_state.set_state("RESPONDING")
-        self.processing_timer.timeout.disconnect() if self.processing_timer.receivers(self.processing_timer.timeout) > 0 else None
+        try:
+            self.processing_timer.timeout.disconnect()
+        except RuntimeError:
+            pass  # No connections to disconnect
         self.processing_timer.timeout.connect(self.transition_to_idle)
         self.processing_timer.start(1500)  # Brief response state
             
     def start_listening_flow(self):
-        try:
-            # Simulate listening duration (e.g. user speaking)
-            # In real implementation, this would be VAD (Voice Activity Detection)
-            print("[SteelCore] Listening...")
-            self.processing_timer.timeout.disconnect() if self.processing_timer.isActive() else None
-            self.processing_timer.timeout.connect(self.transition_to_thinking)
-            self.processing_timer.start(3000) # 3 seconds listen
-            
-        except Exception as e:
-            print(f"[SteelCore] Error in listening: {e}")
-            self.app_state.set_state("ERROR")
+        """Called when LISTENING state is entered. 
+        
+        Note: We no longer use a timer here. The natural flow is:
+        PRE_LISTEN -> LISTENING -> HOLDING -> PROCESSING
+        This is handled by RMS-based silence detection in app_state.py.
+        """
+        print("[SteelCore] Listening... (waiting for silence to trigger PROCESSING)")
 
     def transition_to_thinking(self):
         try:
