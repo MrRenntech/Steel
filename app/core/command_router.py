@@ -20,6 +20,7 @@ from typing import Callable, Optional, List
 
 from .tts_engine import speak as tts_speak, interrupt_speech
 from .speech_recognizer import SpeechRecognizer, CONVERSATION_EXIT
+from .memory import get_memory
 
 # ═══════════════════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -71,15 +72,23 @@ class CommandRouter:
         self.app_state = app_state
         self.speech = speech_recognizer
         
-        # Current mode
-        self._mode = self.MODE_COMMAND
+        # Persistent memory (Tier 1)
+        self.persistent = get_memory()
         
-        # Session memory
+        # Current mode - load from persistent memory
+        self._mode = self.persistent.last_mode or self.MODE_COMMAND
+        
+        # Session memory (Tier 0 - dies on exit)
         self.memory = {
             "last_command": None,
-            "last_theme": None,
+            "last_theme": self.persistent.preferred_theme,  # Pre-load from persistent
             "last_transcript": None,
         }
+        
+        # Apply preferred theme silently on startup
+        if self.persistent.preferred_theme:
+            print(f"[Memory] Applying preferred theme: {self.persistent.preferred_theme}")
+            app_state.set_theme(self.persistent.preferred_theme)
         
         # Initiative tracking
         self._last_user_activity = time.time()
@@ -325,8 +334,13 @@ class CommandRouter:
         else:
             self.speak_intent(f"{theme_name.upper()}.")
         
+        # Update session memory
         self.memory["last_theme"] = theme_name
         self.app_state.set_theme(theme_name)
+        
+        # Persistent memory: confirmation-based (same choice twice = persist)
+        self.persistent.set_with_confirmation("preferred_theme", theme_name)
+        self.persistent.set_with_confirmation("last_successful_command", f"switch to {theme_name}")
     
     def _reload_ui(self):
         self.speak_intent("Reloading.")
