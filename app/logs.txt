@@ -52,3 +52,18 @@ Theme switched to: audi
 State changed to: RESPONDING
 State changed to: PROCESSING
 State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: I didn't catch that.
+[SPEAK] I didn't catch that.
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: HOLDING
+Transcript: I didn't catch that.
+[SPEAK] I didn't catch that.
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
