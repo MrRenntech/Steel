@@ -28,6 +28,7 @@ COMMAND_PHRASES = [
     "reload ui",
     "restart assistant",
     "open logs",
+    "repeat that",
     "help"
 ]
 

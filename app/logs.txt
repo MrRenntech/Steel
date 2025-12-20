@@ -2,24 +2,19 @@
 State changed to: PRE_LISTEN
 State changed to: LISTENING
 State changed to: HOLDING
-Transcript: switch to audi
-[SPEAK] Switch To Audi.
-Theme switched to: audi
+Transcript: help
+Transcript: None
+[SPEAK] None
+Transcript: Theme, reload, restart, open logs, or help.
+[SPEAK] Theme, reload, restart, open logs, or help.
 State changed to: RESPONDING
 State changed to: PROCESSING
 State changed to: IDLE
 State changed to: PRE_LISTEN
+State changed to: HOLDING
 State changed to: LISTENING
 State changed to: HOLDING
-Transcript: switch to bmw
-[SPEAK] Switch To Bmw.
-Theme switched to: bmw
-State changed to: RESPONDING
-State changed to: PROCESSING
-State changed to: IDLE
-State changed to: PRE_LISTEN
-State changed to: LISTENING
-State changed to: HOLDING
+Transcript: I didn't catch that.
 [SPEAK] I didn't catch that.
 State changed to: RESPONDING
 State changed to: PROCESSING
@@ -29,4 +24,31 @@ State changed to: LISTENING
 State changed to: HOLDING
 State changed to: LISTENING
 State changed to: HOLDING
-Transcript: help
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: Command not recognized.
+[SPEAK] Command not recognized.
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: HOLDING
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: reload ui ui
+Transcript: Reloading.
+[SPEAK] Reloading.
+UI reload requested
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: switch to audi
+Transcript: Audi.
+[SPEAK] Audi.
+Theme switched to: audi
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
