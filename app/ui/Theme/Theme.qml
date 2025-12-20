@@ -14,7 +14,7 @@ QtObject {
     // 1. STATE & IDENTITY
     // ─────────────────────────────────────────────────────────────────────────
     property string activeThemeId: "bmw"
-    property string activeWallpaperId: "ambient_sky"
+    property string activeWallpaperId: "ambient_sky.png"
     
     // Derived light/dark mode for text contrast (User requested contrast-aware text)
     property bool lightWallpaper: wallpaperLuminance > 0.65
@@ -25,13 +25,19 @@ QtObject {
     signal themeChanged(string id)
     signal wallpaperChanged(string id)
     
-    // Connect to Python's theme changes
+    // Connect to Python's theme and wallpaper changes
     property var _connections: Connections {
         target: app
         function onThemeChanged() {
             if (app && app.currentTheme) {
                 console.log("Theme.qml: Python requested theme: " + app.currentTheme)
                 root.applyTheme(app.currentTheme)
+            }
+        }
+        function onWallpaperChanged() {
+            if (app && app.currentWallpaper) {
+                console.log("Theme.qml: Python requested wallpaper: " + app.currentWallpaper)
+                root.setWallpaper(app.currentWallpaper)
             }
         }
     }
@@ -157,10 +163,12 @@ QtObject {
     
     // Wallpapers
     property var wallpapers: ({
-        "ambient_sky": { name: "Ambient Sky", source: "ambient_sky.png", luminance: 0.25, mood: "calm" },
-        "warm_dawn":   { name: "Warm Dawn",   source: "warm_dawn.png",   luminance: 0.55, mood: "warm" },
-        "glass_fog":   { name: "Glass Fog",   source: "glass_fog.png",   luminance: 0.70, mood: "neutral" },
-        "soft_horizon":{ name: "Soft Horizon",source: "soft_horizon.png",luminance: 0.60, mood: "calm" }
+        "ambient_sky.png": { name: "Ambient Sky", source: "ambient_sky.png", luminance: 0.25, mood: "calm" },
+        "warm_dawn.png":   { name: "City Dawn",   source: "warm_dawn.png",   luminance: 0.55, mood: "warm" },
+        "glass_fog.png":   { name: "Glass City",   source: "glass_fog.png",   luminance: 0.70, mood: "neutral" },
+        "soft_horizon.png":{ name: "Nordic Landscape",source: "soft_horizon.png",luminance: 0.60, mood: "calm" },
+        "bmw.png":         { name: "Midnight City", source: "bmw.png", luminance: 0.10, mood: "dark" },
+        "bentley.png":     { name: "Royal Estate", source: "bentley.png", luminance: 0.30, mood: "luxury" }
     })
 
     // Themes

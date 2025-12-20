@@ -6,21 +6,31 @@ ListModel {
     ListElement { 
         name: "Ambient Sky"
         source: "ambient_sky.png"
-        description: "Soft blue-cream gradient"
+        description: "Default atmosphere"
     }
     ListElement { 
-        name: "Soft Horizon"
+        name: "Nordic Landscape"
         source: "soft_horizon.png"
-        description: "Ocean meets sky"
+        description: "Sharp horizon & water"
     }
     ListElement { 
-        name: "Glass Fog"
+        name: "Glass City"
         source: "glass_fog.png"
-        description: "Frosted white mist"
+        description: "Modern vertical glass"
     }
     ListElement { 
-        name: "Warm Dawn"
+        name: "City Dawn"
         source: "warm_dawn.png"
-        description: "Golden pink glow"
+        description: "Golden urban light"
+    }
+    ListElement {
+        name: "Midnight City"
+        source: "bmw.png"
+        description: "Deep dark urban"
+    }
+    ListElement {
+        name: "Royal Estate"
+        source: "bentley.png"
+        description: "Luxury landscape"
     }
 }
