@@ -24,6 +24,17 @@ QtObject {
     // Public Signals
     signal themeChanged(string id)
     signal wallpaperChanged(string id)
+    
+    // Connect to Python's theme changes
+    property var _connections: Connections {
+        target: app
+        function onThemeChanged() {
+            if (app && app.currentTheme) {
+                console.log("Theme.qml: Python requested theme: " + app.currentTheme)
+                root.applyTheme(app.currentTheme)
+            }
+        }
+    }
 
     // ─────────────────────────────────────────────────────────────────────────
     // 2. TEXT TOKENS (Responsive to Wallpaper)

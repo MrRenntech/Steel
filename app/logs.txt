@@ -1,19 +1,8 @@
 === STEEL SESSION STARTED ===
 State changed to: PRE_LISTEN
-State changed to: HOLDING
 State changed to: LISTENING
 State changed to: HOLDING
-Transcript: help
-[SPEAK] Help.
-[SPEAK] Available commands: reload ui, restart assistant, switch to bmw, switch to audi, open logs, help.
-State changed to: RESPONDING
-State changed to: PROCESSING
-State changed to: IDLE
-State changed to: PRE_LISTEN
-State changed to: HOLDING
-State changed to: LISTENING
-State changed to: HOLDING
-Transcript: switch to be m w
+Transcript: switch to aldi
 [SPEAK] I didn't understand that yet.
 State changed to: RESPONDING
 State changed to: PROCESSING
@@ -21,11 +10,7 @@ State changed to: IDLE
 State changed to: PRE_LISTEN
 State changed to: LISTENING
 State changed to: HOLDING
-State changed to: LISTENING
-State changed to: HOLDING
-Transcript: switch to audi
-[SPEAK] Switch To Audi.
-Theme switched to: audi
+[SPEAK] I didn't catch that.
 State changed to: RESPONDING
 State changed to: PROCESSING
 State changed to: IDLE
