@@ -112,3 +112,17 @@ def get_tts_engine() -> TTSEngine:
 def speak(text: str):
     """Convenience function - speak text using global engine."""
     get_tts_engine().speak(text)
+
+def interrupt_speech():
+    """Immediately stop any speaking. Used for hard interrupts."""
+    engine = get_tts_engine()
+    # Clear the queue
+    while not engine._queue.empty():
+        try:
+            engine._queue.get_nowait()
+        except:
+            break
+    # Stop current speech
+    if engine._engine:
+        engine._engine.stop()
+    print("[TTS] Speech interrupted")

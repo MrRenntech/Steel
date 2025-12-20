@@ -4,90 +4,95 @@ Steel OS v6.5
 
 Design Philosophy:
 - BMW energy: calm, measured, never rushed
-- speak_intent() wrapper: deliberate pause, speak, closure
-- Session memory for context-aware responses
-- Never chatty, always intentional
+- Interrupts bypass EVERYTHING
+- Compound commands: "X and Y"
+- speak_intent() wrapper for timing discipline
 """
 
 import os
 import subprocess
 import sys
 import time
-from typing import Callable, Optional
+from typing import Callable, Optional, List
 
-from .tts_engine import speak as tts_speak
+from .tts_engine import speak as tts_speak, interrupt_speech
 
 # ═══════════════════════════════════════════════════════════════════════════
-# TIMING CONSTANTS (BMW-style deliberate pacing)
+# TIMING CONSTANTS
 # ═══════════════════════════════════════════════════════════════════════════
-PAUSE_BEFORE_SPEAK = 0.25   # Deliberate pause (thinking, not lag)
-PAUSE_AFTER_SPEAK = 0.30    # Closure beat before returning
+PAUSE_BEFORE_SPEAK = 0.25   # Deliberate pause
+PAUSE_AFTER_SPEAK = 0.30    # Closure beat
+
+# ═══════════════════════════════════════════════════════════════════════════
+# HARD INTERRUPTS - These ALWAYS work, regardless of state
+# ═══════════════════════════════════════════════════════════════════════════
+INTERRUPTS = [
+    "stop",
+    "cancel", 
+    "never mind",
+    "shut up"
+]
+
+
+def is_interrupt(text: str) -> bool:
+    """Check if text contains any interrupt phrase."""
+    if not text:
+        return False
+    text = text.lower()
+    return any(phrase in text for phrase in INTERRUPTS)
+
+
+def split_commands(text: str) -> List[str]:
+    """Split compound commands by 'and'."""
+    return [cmd.strip() for cmd in text.split(" and ") if cmd.strip()]
 
 
 class CommandRouter:
-    """Routes voice commands with BMW-style deliberate pacing and memory."""
+    """Routes voice commands with interrupts, compounds, and memory."""
     
     def __init__(self, app_state):
         self.app_state = app_state
         
-        # ─────────────────────────────────────────────────────────────
-        # SESSION MEMORY (RAM only, dies when app closes - that's good)
-        # ─────────────────────────────────────────────────────────────
+        # Session memory (RAM only)
         self.memory = {
             "last_command": None,
             "last_theme": None,
             "last_transcript": None,
         }
         
-        # Command map: exact phrases -> actions
-        self.commands: dict[str, Callable] = {
-            # Theme commands
-            "switch to bmw": lambda: self.set_theme("bmw"),
-            "switch to audi": lambda: self.set_theme("audi"),
-            "switch to bentley": lambda: self.set_theme("bentley"),
-            
-            # System commands
-            "reload ui": self.reload_ui,
-            "restart assistant": self.restart_assistant,
-            "open logs": self.open_logs,
-            
-            # Memory commands
-            "repeat that": self.repeat_last,
-            
-            # Help
-            "help": self.show_help,
+        # Command map
+        self.command_actions = {
+            "switch to bmw": lambda: self._set_theme("bmw"),
+            "switch to audi": lambda: self._set_theme("audi"),
+            "switch to bentley": lambda: self._set_theme("bentley"),
+            "reload ui": self._reload_ui,
+            "restart assistant": self._restart_assistant,
+            "open logs": self._open_logs,
+            "repeat that": self._repeat_last,
+            "help": self._show_help,
         }
     
     # ═══════════════════════════════════════════════════════════════════════════
-    # SPEAK INTENT - THE ONE WRAPPER TO RULE THEM ALL
-    # Never call tts_speak directly. Always go through this.
+    # SPEAK INTENT - All speech goes through this
     # ═══════════════════════════════════════════════════════════════════════════
     
     def speak_intent(self, text: str):
-        """
-        Deliberate speaking with timing discipline.
-        All speech must go through this function. No exceptions.
-        """
-        # Set transcript first (eyes lead)
+        """Deliberate speaking with timing discipline."""
         self.app_state.set_transcript(text)
-        
-        # Log
         print(f"[SPEAK] {text}")
         self.app_state.log(f"[SPEAK] {text}")
-        
-        # Deliberate pause (brain reads this as 'thinking')
         time.sleep(PAUSE_BEFORE_SPEAK)
-        
-        # Speak (ears follow)
         tts_speak(text)
-        
-        # Closure beat (moment of stillness)
         time.sleep(PAUSE_AFTER_SPEAK)
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # MAIN ENTRY POINT
+    # ═══════════════════════════════════════════════════════════════════════════
     
     def handle_command(self, text: str) -> bool:
         """
-        Router function - the heart of the system.
-        Returns True if a command was matched, False otherwise.
+        Main entry point. Handles interrupts, compounds, and single commands.
+        Returns True if any command was matched.
         """
         if not text:
             self.speak_intent("I didn't catch that.")
@@ -95,65 +100,97 @@ class CommandRouter:
         
         text = text.lower().strip()
         
-        # Save transcript to memory (silently, never announce)
+        # ─────────────────────────────────────────────────────────────
+        # STEP 1: CHECK FOR INTERRUPTS (before ANYTHING else)
+        # ─────────────────────────────────────────────────────────────
+        if is_interrupt(text):
+            self._handle_interrupt()
+            return True  # Interrupt handled, no further processing
+        
+        # Save transcript to memory
         self.memory["last_transcript"] = text
         
-        # Check each command phrase
-        for phrase, action in self.commands.items():
+        # ─────────────────────────────────────────────────────────────
+        # STEP 2: CHECK FOR COMPOUND COMMANDS
+        # ─────────────────────────────────────────────────────────────
+        parts = split_commands(text)
+        
+        if len(parts) > 1:
+            return self._handle_compound(parts)
+        
+        # ─────────────────────────────────────────────────────────────
+        # STEP 3: SINGLE COMMAND
+        # ─────────────────────────────────────────────────────────────
+        return self._handle_single(text)
+    
+    def _handle_interrupt(self):
+        """Handle hard interrupt - stop everything immediately."""
+        print("[CommandRouter] INTERRUPT detected")
+        interrupt_speech()
+        self.app_state.set_transcript("")
+        # Say nothing, or at most "Okay." (brief acknowledgment)
+        # We choose silence for maximum respect
+        self.app_state.set_state("IDLE")
+    
+    def _handle_compound(self, parts: List[str]) -> bool:
+        """Handle compound command like 'switch to bmw and reload ui'."""
+        matched_any = False
+        executed = []
+        
+        for part in parts:
+            for phrase, action in self.command_actions.items():
+                if phrase in part:
+                    if phrase != "repeat that":
+                        self.memory["last_command"] = phrase
+                    executed.append(phrase)
+                    action()
+                    matched_any = True
+                    break
+        
+        if matched_any:
+            # Narrate once at the end
+            self.speak_intent("Done.")
+        else:
+            self.speak_intent("Command not recognized.")
+        
+        return matched_any
+    
+    def _handle_single(self, text: str) -> bool:
+        """Handle a single command."""
+        for phrase, action in self.command_actions.items():
             if phrase in text:
-                # Save command to memory (silently)
-                if phrase != "repeat that":  # Don't save "repeat that" as last command
+                if phrase != "repeat that":
                     self.memory["last_command"] = phrase
-                
-                # Execute
                 action()
                 return True
         
-        # No match found
         self.speak_intent("Command not recognized.")
         return False
     
     # ═══════════════════════════════════════════════════════════════════════════
-    # THEME COMMANDS (Context-aware responses)
+    # COMMAND IMPLEMENTATIONS (These speak, then act)
     # ═══════════════════════════════════════════════════════════════════════════
     
-    def set_theme(self, theme_name: str):
-        """Switch to a different theme with contextual response."""
-        print(f"[CommandRouter] Switching to {theme_name} theme...")
-        
-        # Context-aware response
+    def _set_theme(self, theme_name: str):
+        """Switch theme with contextual response."""
         if self.memory["last_theme"] == theme_name:
-            # Same theme twice in a row
             self.speak_intent(f"{theme_name.upper()} again.")
         else:
-            # Normal switch
             self.speak_intent(f"{theme_name.upper()}.")
         
-        # Update memory and execute
         self.memory["last_theme"] = theme_name
         self.app_state.set_theme(theme_name)
     
-    # ═══════════════════════════════════════════════════════════════════════════
-    # SYSTEM COMMANDS
-    # ═══════════════════════════════════════════════════════════════════════════
-    
-    def reload_ui(self):
-        """Emit signal to reload the QML UI."""
+    def _reload_ui(self):
         self.speak_intent("Reloading.")
-        print("[CommandRouter] Reloading UI...")
         self.app_state.request_reload_ui()
     
-    def restart_assistant(self):
-        """Reset assistant state to IDLE."""
+    def _restart_assistant(self):
         self.speak_intent("Restarting.")
-        print("[CommandRouter] Restarting assistant...")
         self.app_state.set_state("IDLE")
     
-    def open_logs(self):
-        """Open the logs file in the default text editor."""
+    def _open_logs(self):
         self.speak_intent("Opening logs.")
-        print("[CommandRouter] Opening logs...")
-        
         logs_path = os.path.join(os.path.dirname(__file__), "..", "logs.txt")
         logs_path = os.path.abspath(logs_path)
         
@@ -167,25 +204,13 @@ class CommandRouter:
         except Exception as e:
             print(f"[CommandRouter] Failed to open logs: {e}")
     
-    # ═══════════════════════════════════════════════════════════════════════════
-    # MEMORY COMMANDS
-    # ═══════════════════════════════════════════════════════════════════════════
-    
-    def repeat_last(self):
-        """Repeat the last command."""
+    def _repeat_last(self):
         last = self.memory.get("last_command")
-        if last:
+        if last and last in self.command_actions:
             self.speak_intent("Repeating.")
-            # Find and execute the command
-            if last in self.commands:
-                self.commands[last]()
+            self.command_actions[last]()
         else:
-            self.speak_intent("Nothing to repeat yet.")
+            self.speak_intent("Nothing to repeat.")
     
-    # ═══════════════════════════════════════════════════════════════════════════
-    # HELP
-    # ═══════════════════════════════════════════════════════════════════════════
-    
-    def show_help(self):
-        """Speak available commands - brief and clear."""
-        self.speak_intent("Theme, reload, restart, logs, repeat, or help.")
+    def _show_help(self):
+        self.speak_intent("Theme, reload, restart, logs, repeat, stop, or help.")

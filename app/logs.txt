@@ -1,53 +1,19 @@
 === STEEL SESSION STARTED ===
 State changed to: PRE_LISTEN
-State changed to: LISTENING
-State changed to: HOLDING
-Transcript: help
-Transcript: None
-[SPEAK] None
-Transcript: Theme, reload, restart, open logs, or help.
-[SPEAK] Theme, reload, restart, open logs, or help.
-State changed to: RESPONDING
-State changed to: PROCESSING
-State changed to: IDLE
-State changed to: PRE_LISTEN
-State changed to: HOLDING
-State changed to: LISTENING
-State changed to: HOLDING
-Transcript: I didn't catch that.
-[SPEAK] I didn't catch that.
-State changed to: RESPONDING
-State changed to: PROCESSING
-State changed to: IDLE
-State changed to: PRE_LISTEN
-State changed to: LISTENING
 State changed to: HOLDING
 State changed to: LISTENING
 State changed to: HOLDING
 State changed to: LISTENING
 State changed to: HOLDING
-Transcript: Command not recognized.
-[SPEAK] Command not recognized.
-State changed to: RESPONDING
-State changed to: PROCESSING
-State changed to: IDLE
-State changed to: PRE_LISTEN
-State changed to: HOLDING
+Transcript: switch to audi repeat never mind
 State changed to: LISTENING
 State changed to: HOLDING
-Transcript: reload ui ui
-Transcript: Reloading.
-[SPEAK] Reloading.
-UI reload requested
-State changed to: RESPONDING
-State changed to: PROCESSING
-State changed to: IDLE
-State changed to: PRE_LISTEN
+Transcript: reload restart reload repeat that
 State changed to: LISTENING
 State changed to: HOLDING
 Transcript: switch to audi
-Transcript: Audi.
-[SPEAK] Audi.
+Transcript: AUDI.
+[SPEAK] AUDI.
 Theme switched to: audi
 State changed to: RESPONDING
 State changed to: PROCESSING
@@ -55,15 +21,27 @@ State changed to: IDLE
 State changed to: PRE_LISTEN
 State changed to: LISTENING
 State changed to: HOLDING
-Transcript: I didn't catch that.
-[SPEAK] I didn't catch that.
+Transcript: to audi
+Transcript: Command not recognized.
+[SPEAK] Command not recognized.
 State changed to: RESPONDING
 State changed to: PROCESSING
 State changed to: IDLE
 State changed to: PRE_LISTEN
+State changed to: LISTENING
 State changed to: HOLDING
-Transcript: I didn't catch that.
-[SPEAK] I didn't catch that.
+Transcript: switch to audi
+Transcript: AUDI again.
+[SPEAK] AUDI again.
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: mind
+Transcript: Command not recognized.
+[SPEAK] Command not recognized.
 State changed to: RESPONDING
 State changed to: PROCESSING
 State changed to: IDLE

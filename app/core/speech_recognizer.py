@@ -22,14 +22,21 @@ from vosk import Model, KaldiRecognizer
 # COMMAND VOCABULARY - The only phrases we recognize
 # ═══════════════════════════════════════════════════════════════════════════
 COMMAND_PHRASES = [
+    # Theme commands
     "switch to bmw",
     "switch to audi",
     "switch to bentley",
+    # System commands
     "reload ui",
     "restart assistant",
     "open logs",
     "repeat that",
-    "help"
+    "help",
+    # Hard interrupts (these bypass everything)
+    "stop",
+    "cancel",
+    "never mind",
+    "shut up"
 ]
 
 # Confidence threshold - below this, we ask user to repeat
