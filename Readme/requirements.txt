@@ -3,3 +3,4 @@ psutil
 sounddevice
 numpy
 vosk
+pyttsx3

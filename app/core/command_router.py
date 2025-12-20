@@ -13,6 +13,8 @@ import subprocess
 import sys
 from typing import Callable, Optional
 
+from .tts_engine import speak as tts_speak
+
 class CommandRouter:
     """Routes voice commands to actions using exact phrase matching."""
     
@@ -32,10 +34,11 @@ class CommandRouter:
     def speak(self, message: str):
         """
         Speech output - acknowledge before acting.
-        Currently prints to console and logs. TTS can be added later.
+        Uses pyttsx3 for actual audio output.
         """
         print(f"[SPEAK] {message}")
         self.app_state.log(f"[SPEAK] {message}")
+        tts_speak(message)  # Real audio!
     
     def handle_command(self, text: str) -> bool:
         """
