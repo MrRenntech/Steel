@@ -1,6 +1,7 @@
 from enum import Enum
 from PySide6.QtCore import QObject, Signal, Property, Slot, QTimer
 from .mic_monitor import MicMonitor
+from .speech_recognizer import SpeechRecognizer
 
 class AssistantState(str, Enum):
     IDLE = "IDLE"
@@ -39,6 +40,32 @@ class AppState(QObject):
         # Clear log file on start
         with open("logs.txt", "w") as f:
             f.write("=== STEEL SESSION STARTED ===\n")
+        
+        # Speech Recognizer (Vosk - offline)
+        self._init_speech_recognizer()
+    
+    def _init_speech_recognizer(self):
+        """Initialize the Vosk speech recognizer."""
+        try:
+            self.speech = SpeechRecognizer(
+                on_partial=self._on_partial_transcript,
+                on_final=self._on_final_transcript
+            )
+            print("[AppState] Speech recognizer initialized")
+        except Exception as e:
+            print(f"[AppState] Failed to initialize speech recognizer: {e}")
+            self.speech = None
+    
+    def _on_partial_transcript(self, text: str):
+        """Called when partial transcript is available (live subtitles)."""
+        self._partial_transcript = text
+        self.transcriptChanged.emit()
+    
+    def _on_final_transcript(self, text: str):
+        """Called when final transcript is available."""
+        self._partial_transcript = text
+        self.transcriptChanged.emit()
+        self.log(f"Transcript: {text}")
 
     # Signals
     statusChanged = Signal()
@@ -130,11 +157,37 @@ class AppState(QObject):
             # Allow case-insensitive string matching for QML convenience
             valid_state = AssistantState[new_state.upper()].value
             if self._assistant_state != valid_state:
+                old_state = self._assistant_state
                 self._assistant_state = valid_state
                 self.assistantStateChanged.emit()
                 self.log(f"State changed to: {valid_state}")
+                
+                # Start/stop speech recognition based on state
+                self._handle_speech_recognition_state(old_state, valid_state)
         except KeyError:
             self.log(f"Invalid state requested: {new_state}")
+    
+    def _handle_speech_recognition_state(self, old_state: str, new_state: str):
+        """Start/stop speech recognition based on state transitions."""
+        if not hasattr(self, 'speech') or not self.speech:
+            return
+        
+        # Start listening when entering PRE_LISTEN or LISTENING
+        if new_state in [AssistantState.PRE_LISTEN.value, AssistantState.LISTENING.value]:
+            if not self.speech.is_running:
+                self._partial_transcript = ""  # Clear old transcript
+                self.transcriptChanged.emit()
+                self.speech.start()
+        
+        # Stop listening when entering PROCESSING (get final transcript)
+        elif new_state == AssistantState.PROCESSING.value:
+            if self.speech.is_running:
+                self.speech.stop()
+        
+        # Also stop when going back to IDLE unexpectedly
+        elif new_state == AssistantState.IDLE.value:
+            if self.speech.is_running:
+                self.speech.stop()
 
     @Slot(str)
     def set_theme(self, theme_name):
