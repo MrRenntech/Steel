@@ -14,7 +14,7 @@ if errorlevel 1 (
 )
 
 echo [INFO] Installing Python dependencies...
-pip install -r requirements.txt
+pip install -r Readme\requirements.txt
 
 if errorlevel 1 (
     echo [ERROR] Failed to install dependencies.

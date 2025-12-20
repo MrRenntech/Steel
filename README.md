@@ -28,7 +28,7 @@ cd Steel
 
 # 2. Install dependencies
 prereq.bat
-# Or: pip install -r requirements.txt
+# Or: pip install -r Readme\requirements.txt
 
 # 3. Configure
 copy .env.example .env
@@ -72,7 +72,7 @@ run.bat
 - Warm Dawn
 
 ## 📖 Documentation
-- **[HOW_TO.md](HOW_TO.md)** — Complete technical reference for interviews
+- **[HOW_TO.txt](Readme/HOW_TO.txt)** — Complete technical reference for interviews
 - **[.env.example](.env.example)** — Environment variable template
 
 ## 🎮 Usage
@@ -93,10 +93,12 @@ Steel/
 │   │   ├── components/   # CoreVisual, GlassTile, BackgroundField
 │   │   └── panels/       # AssistantPanel, WallpaperPanel
 │   └── themes/           # BMW-inspired themes
-├── HOW_TO.md             # Technical deep-dive
+├── Readme/              # Documentation folder
+│   ├── HOW_TO.txt        # Technical deep-dive
+│   ├── project_tree.txt  # Full directory tree
+│   └── requirements.txt  # Dependencies
 ├── run.bat               # Launch script
-├── prereq.bat            # Dependency installer
-└── requirements.txt
+└── prereq.bat            # Dependency installer
 ```
 
 ## 📝 Changelog

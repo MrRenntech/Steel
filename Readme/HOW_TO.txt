@@ -1,0 +1,279 @@
+================================================================================
+                    STEEL OS - COMPLETE PROJECT DOCUMENTATION
+                            Technical & Design Reference v6.5
+================================================================================
+
+PURPOSE: Complete guide for understanding, installing, running, and developing Steel OS.
+
+================================================================================
+                              1. PROJECT OVERVIEW
+================================================================================
+
+Steel is a desktop AI assistant with a premium holographic glass UI. It combines:
+  - Voice AI powered by Google Gemini 1.5 Pro
+  - Glass-OS Aesthetic inspired by VisionOS, BMW iDrive, and Jarvis
+  - Living AI Core with state-driven animations
+
+CORE PHILOSOPHY:
+  - Glass, Not Dark: Light frosted panels on soft backgrounds
+  - Motion = State: The orb only moves when something is happening
+  - System Language: IT-native terms (Cognitive Core, not "Settings")
+  - Depth Layers: Background -> Glass -> Interaction planes
+
+================================================================================
+                              2. REQUIREMENTS
+================================================================================
+
+SYSTEM REQUIREMENTS:
+  - Operating System: Windows 10/11 (64-bit)
+  - Python: 3.10 or higher
+  - RAM: 4GB minimum (8GB recommended)
+  - Internet connection (for Gemini AI)
+
+PYTHON PACKAGES (requirements.txt):
+  - pyside6    : Qt6 GUI framework for Python (cross-platform UI)
+  - psutil     : System monitoring (CPU, memory, processes)
+  - sounddevice: Real-time audio input/output for voice detection
+  - numpy      : Numerical operations for audio processing
+
+API KEYS NEEDED:
+  - Google Gemini API key (required for AI functionality)
+  - Wolfram Alpha App ID (optional, for math queries)
+
+================================================================================
+                              3. INSTALLATION
+================================================================================
+
+STEP 1: Install Python 3.10+
+  - Download from https://python.org
+  - During install, CHECK "Add Python to PATH"
+
+STEP 2: Clone/Download the project
+  - Place in a folder like: C:\Projects\Steel-main
+
+STEP 3: Install dependencies
+  Open Command Prompt in the project folder:
+    pip install -r "Readme\requirements.txt"
+  
+  OR run the batch file:
+    prereq.bat
+
+STEP 4: Configure environment variables
+  - Copy .env.example to .env
+  - Edit .env and add your GEMINI_API_KEY
+  
+  Example .env content:
+    GEMINI_API_KEY=your_api_key_here
+
+================================================================================
+                              4. HOW TO RUN
+================================================================================
+
+OPTION 1: Use the launcher (recommended)
+  Double-click: run.bat
+
+OPTION 2: Run manually
+  Open Command Prompt:
+    cd app
+    python main.py
+
+The application will open a fullscreen window with the Steel OS interface.
+
+================================================================================
+                              5. TECHNOLOGY STACK
+================================================================================
+
+BACKEND (Python):
+  +-----------------+----------------------+----------------------------------+
+  | Component       | Technology           | Purpose                          |
+  +-----------------+----------------------+----------------------------------+
+  | AI Engine       | Google Gemini 1.5    | NLP, memory, vision              |
+  | GUI Framework   | PySide6 (Qt 6)       | Modern cross-platform UI         |
+  | Audio           | sounddevice          | Voice input, mic monitoring      |
+  | State           | QObject Signals      | Reactive data binding            |
+  +-----------------+----------------------+----------------------------------+
+
+FRONTEND (QML):
+  +-----------------+----------------------+----------------------------------+
+  | Component       | Technology           | Purpose                          |
+  +-----------------+----------------------+----------------------------------+
+  | Layout          | QtQuick Layouts      | Responsive grids                 |
+  | Animation       | SequentialAnimation  | State transitions                |
+  | Theming         | ThemeLoader singleton| Color/font system                |
+  +-----------------+----------------------+----------------------------------+
+
+================================================================================
+                              6. FILE STRUCTURE
+================================================================================
+
+Steel-main/
+|
++-- app/                          # Main application folder
+|   |
+|   +-- main.py                   # ENTRY POINT - starts the application
+|   |                             # Initializes Qt, loads QML, creates state
+|   |
+|   +-- core/                     # Backend Python logic
+|   |   +-- app_state.py          # Reactive state manager (assistantState,
+|   |   |                         # audioLevel, currentWallpaper, etc.)
+|   |   +-- steel_core.py         # AI engine wrapper, Gemini integration
+|   |   +-- mic_monitor.py        # Real-time microphone level monitoring
+|   |   +-- system_bridge.py      # System utilities (CPU, memory, time)
+|   |
+|   +-- ui/                       # Frontend QML interface
+|   |   +-- main.qml              # Main window, 3-zone layout orchestrator
+|   |   |
+|   |   +-- components/           # Reusable UI components
+|   |   |   +-- CoreVisual.qml    # 5-layer AI orb (main visual element)
+|   |   |   +-- GlassTile.qml     # Light glass card component
+|   |   |   +-- BackgroundField.qml    # Ambient atmosphere background
+|   |   |   +-- EnvironmentBackground.qml  # Alternative background style
+|   |   |   +-- WallpaperPanel.qml     # Wallpaper selector interface
+|   |   |   +-- WallpaperModel.qml     # Curated wallpaper database
+|   |   |   +-- ThemeLoader.qml        # Theme singleton (colors, fonts)
+|   |   |   +-- NeuralWebRing.qml      # Neural network visual effect
+|   |   |   +-- OrbNet.qml             # Orbital network visual
+|   |   |   +-- GlassContainer.qml     # Glass panel wrapper
+|   |   |   +-- TabContainer.qml       # Tab navigation container
+|   |   |   +-- UIContext.qml          # UI context provider
+|   |   |
+|   |   +-- panels/               # Main content panels
+|   |   |   +-- AssistantPanel.qml    # Command center, voice interface
+|   |   |   +-- HomePanel.qml         # Home screen dashboard
+|   |   |   +-- SettingsPanel.qml     # Settings/configuration (30KB+)
+|   |   |   +-- MediaPanel.qml        # Media player controls
+|   |   |   +-- NavPanel.qml          # Navigation panel
+|   |   |   +-- VehiclePanel.qml      # Vehicle status display
+|   |   |
+|   |   +-- screens/              # Full screen views
+|   |   +-- Theme/                # Theme definitions and fonts
+|   |
+|   +-- themes/                   # Theme configurations
+|   |   +-- base/Theme.qml        # Base color tokens
+|   |   +-- audi/Theme.qml        # Audi-themed variant
+|   |
+|   +-- motion/                   # Animation profiles
+|   +-- assets/                   # Images, icons, wallpapers
+|
++-- Readme/                       # Documentation folder
+|   +-- HOW_TO.txt                # This file - complete documentation
+|   +-- project_tree.txt          # Full directory tree
+|   +-- requirements.txt          # Python dependencies
+|   +-- logs.txt                  # Session logs
+|   +-- update_tree.bat           # Script to regenerate tree
+|
++-- run.bat                       # Application launcher script
++-- prereq.bat                    # Dependency installer script
++-- verify_env.py                 # Environment verification script
++-- .env.example                  # Environment template
++-- README.md                     # Project readme
+
+================================================================================
+                              7. APPLICATION STATES
+================================================================================
+
+The AI orb has different visual states controlled by app_state.py:
+
+  STATE           COLOR       BEHAVIOR
+  -------         -------     --------------------------------------------------
+  IDLE            Blue        Slow breathing animation (5s), subtle drift (9s)
+  LISTENING       Cyan        Audio waveform visible, reacts to voice input
+  THINKING        Amber       Processing indicator, depth ring rotates
+  RESPONDING      Green       Pulse animation, orb expands during speech
+  ERROR           Red         Tension effect, indicates problem
+
+State is managed through Qt signals - when Python changes state, QML 
+automatically updates the visual display.
+
+================================================================================
+                              8. THREE-ZONE LAYOUT
+================================================================================
+
+  +-----------------------------------------------------------+
+  | TOP SYSTEM BAR (64px)                                     |
+  | [STEEL] [CORE] [INPUT] [SYSTEM] [...]          [ONLINE]   |
+  +--------------------------------------+--------------------+
+  | LEFT CONTENT (65%)                   | RIGHT CORE (35%)   |
+  |                                      |                    |
+  | +----------+ +----------+            |   +---------+      |
+  | |COGNITIVE | | VOICE    |            |   | AI ORB  |      |
+  | |  CORE    | |INTERFACE |            |   |  o o o  |      |
+  | +----------+ +----------+            |   +---------+      |
+  | +----------+ +----------+            |   "Ready"          |
+  | | RUNTIME  | | CONNECT. |            |   Click to activate|
+  | +----------+ +----------+            |                    |
+  +--------------------------------------+--------------------+
+  | BOTTOM CONTEXT BAR (56px)                                 |
+  | Ready for input | [][][][][] MIC | v6.5                   |
+  +-----------------------------------------------------------+
+
+================================================================================
+                              9. DESIGN GUIDELINES
+================================================================================
+
+COLOR TOKENS:
+  Panel Background: rgba(1,1,1,0.08)  - Glass tiles (light, not dark)
+  Panel Border:     rgba(1,1,1,0.15)  - Subtle edges
+  Listening:        #00D4FF           - Cyan, active voice
+  Thinking:         #FFCC00           - Amber, processing
+  Responding:       #00FF88           - Green, speaking
+  Success:          #00FF88           - "ONLINE" status
+
+TYPOGRAPHY:
+  Labels:    11px, Medium, 1.6 letter-spacing, UPPERCASE
+  Values:    22px, DemiBold
+  Subtitles: 11px, Regular, 40% opacity
+
+MOTION:
+  IDLE:    Slow breathing (5s), subtle 4px drift (9s)
+  Active:  Motion only, no drift
+  Easing:  300-600ms, OutCubic
+
+================================================================================
+                              10. TROUBLESHOOTING
+================================================================================
+
+PROBLEM: "Python is not installed"
+  SOLUTION: Install Python 3.10+ from python.org, check "Add to PATH"
+
+PROBLEM: "ModuleNotFoundError: No module named 'PySide6'"
+  SOLUTION: Run: pip install pyside6
+
+PROBLEM: ".env file not found"
+  SOLUTION: Copy .env.example to .env and add your API keys
+
+PROBLEM: "API key invalid"
+  SOLUTION: Get a valid Gemini API key from Google AI Studio
+
+PROBLEM: Window opens but is blank
+  SOLUTION: Check console for QML errors, ensure Qt6 is properly installed
+
+PROBLEM: No audio detection
+  SOLUTION: Check microphone permissions, sounddevice installation
+
+================================================================================
+                              11. VERSION HISTORY
+================================================================================
+
+  VERSION   CHANGES
+  -------   ----------------------------------------------------------------
+  6.5       4-Phase Visual Overhaul: 3-zone layout, bottom bar, system 
+            naming, state-driven orb
+  6.4       Wallpaper system, true glass panels, command center refactor
+  5.7       Initial BMW iDrive theme
+
+================================================================================
+                              12. CREDITS & LICENSE
+================================================================================
+
+Created by: [Your Name]
+Last Updated: 2024-12-20
+
+Inspired by:
+  - Apple VisionOS glass aesthetics
+  - BMW iDrive interface design
+  - Iron Man Jarvis AI interface
+
+================================================================================
+                                END OF DOCUMENT
+================================================================================
