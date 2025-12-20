@@ -19,6 +19,17 @@ class SteelCore(QObject):
         self.processing_timer = QTimer(self)
         self.processing_timer.setSingleShot(True)
         
+        # Initiative timer (checks for suggestions every 5s)
+        self.initiative_timer = QTimer(self)
+        self.initiative_timer.timeout.connect(self.check_initiative)
+        self.initiative_timer.start(5000)
+
+    @Slot()
+    def check_initiative(self):
+        """Periodically check if assistant should offer a suggestion."""
+        if self.app_state.assistantState == "IDLE":
+            self.router.maybe_offer_suggestion()
+        
     @Slot()
     def on_state_changed(self):
         current_state = self.app_state.assistantState

@@ -24,6 +24,7 @@ class AppState(QObject):
         self._last_intent = ""
         self._confidence = 0.0
         self._current_wallpaper = "ambient_sky.png"  # Default wallpaper
+        self._interaction_mode = "COMMAND"  # COMMAND, CONVERSATION
         
         # Audio Logic
         self.silence_duration = 0.0
@@ -77,7 +78,8 @@ class AppState(QObject):
     lastIntentChanged = Signal()
     confidenceChanged = Signal()
     wallpaperChanged = Signal()
-    reloadUIRequested = Signal()  # Signal for UI reload command
+    reloadUIRequested = Signal()
+    interactionModeChanged = Signal()  # COMMAND/CONVERSATION mode changes
 
     # Properties
     @Property(str, notify=statusChanged)
@@ -112,7 +114,19 @@ class AppState(QObject):
     def currentWallpaper(self):
         return self._current_wallpaper
 
+    @Property(str, notify=interactionModeChanged)
+    def interactionMode(self):
+        """Current interaction mode: COMMAND or CONVERSATION"""
+        return self._interaction_mode
+
     # Slots
+    @Slot(str)
+    def set_interaction_mode(self, mode: str):
+        """Set interaction mode (called from command router)."""
+        if mode in ["COMMAND", "CONVERSATION"] and self._interaction_mode != mode:
+            self._interaction_mode = mode
+            self.interactionModeChanged.emit()
+            print(f"[AppState] Interaction mode: {mode}")
     @Slot(float)
     def set_audio_level(self, level):
         if self._audio_level != level:

@@ -30,6 +30,7 @@ Item {
     property string activeTab: "CORE"
     property real audioLevel: 0.0
     property string assistantText: "" // Output text from Assistant
+    property string interactionMode: "COMMAND"  // COMMAND or CONVERSATION
     signal clicked()
 
     // State helpers
@@ -38,6 +39,9 @@ Item {
     property bool responding: assistantState === "RESPONDING"
     property bool idle: assistantState === "IDLE"
     property bool active: !idle
+    
+    // Mode helpers (for visual cues)
+    property bool conversationMode: interactionMode === "CONVERSATION"
     
     // Reset orb rotation when thinking stops
     onThinkingChanged: {
@@ -174,11 +178,17 @@ Item {
         // Proximity Reactivity: Glow brightens when hovered
         property real proximityStart: hovering ? 0.4 : 0.0
         
+        // Mode-based glow adjustment
+        // CONVERSATION: Softer, warmer glow
+        // COMMAND: Crisp accent color
+        property real modeOpacity: conversationMode ? 0.35 : 0.25
+        
         // State-dependent color
-        color: listening ? Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.25)
+        color: listening ? Qt.rgba(accentColor.r, accentColor.g, accentColor.b, modeOpacity)
              : thinking ? Qt.rgba(1.0, 0.8, 0.3, 0.2)
-             : responding ? Qt.rgba(0.2, 1.0, 0.6, 0.3 + (root.audioLevel * 0.2)) // Audio reactive brightness
-             : Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.05 + proximityStart) // Faint Idle Bloom + Proximity
+             : responding ? Qt.rgba(0.2, 1.0, 0.6, 0.3 + (root.audioLevel * 0.2))
+             : conversationMode ? Qt.rgba(1.0, 0.9, 0.8, 0.08 + proximityStart)  // Warmer idle in conversation
+             : Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.05 + proximityStart)
         
         Behavior on color { ColorAnimation { duration: 800 } }
         
@@ -210,9 +220,9 @@ Item {
         x: (parent.width - width)/2 + (smoothX * 20)
         y: (100) - (height/2) + (smoothY * 20)
         
-        // STEP 4 REFINEMENT: 1.5px (Calm)
-        border.width: 1.5
-        border.color: Qt.rgba(accentColor.r, accentColor.g, accentColor.b, 0.65)
+        // STEP 4 REFINEMENT: 1.5px (Calm) - softer in conversation mode
+        border.width: conversationMode ? 1.0 : 1.5
+        border.color: Qt.rgba(accentColor.r, accentColor.g, accentColor.b, conversationMode ? 0.45 : 0.65)
         
         // Animation: Breathing (IDLE) vs Tighten (LISTENING)
         // Focus Response: Tighten by ~4% when listening

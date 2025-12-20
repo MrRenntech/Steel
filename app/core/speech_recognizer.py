@@ -41,6 +41,13 @@ COMMAND_PHRASES = [
     "let's talk",
     "talk to me",
     "conversation mode",
+    # Confirmation/Rejection (for suggestions)
+    "yes",
+    "sure",
+    "okay",
+    "do it",
+    "no",
+    "nah"
 ]
 
 # Conversation exit phrases (recognized in full model)

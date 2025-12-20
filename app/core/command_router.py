@@ -31,6 +31,10 @@ PAUSE_AFTER_SPEAK = 0.30
 # Hard interrupts
 INTERRUPTS = ["stop", "cancel", "never mind", "shut up"]
 
+# Suggestion responses
+CONFIRMATIONS = ["yes", "sure", "okay", "do it"]
+REJECTIONS = ["no", "nah"]
+
 # Mode triggers
 CONVERSATION_TRIGGERS = ["let's talk", "talk to me", "conversation mode"]
 
@@ -94,6 +98,7 @@ class CommandRouter:
         self._last_user_activity = time.time()
         self._last_initiative = 0.0
         self._initiative_offered = False
+        self._pending_suggestion_action = None  # Callable if waiting for confirmation
         
         # Command map
         self.command_actions = {
@@ -177,6 +182,7 @@ class CommandRouter:
         # Exit conversation mode if in it
         if self._mode == self.MODE_CONVERSATION:
             self._mode = self.MODE_COMMAND
+            self.app_state.set_interaction_mode(self.MODE_COMMAND)
             if self.speech:
                 self.speech.set_mode(SpeechRecognizer.MODE_COMMAND)
         
@@ -186,6 +192,7 @@ class CommandRouter:
         """Enter conversation mode."""
         print("[CommandRouter] Entering CONVERSATION MODE")
         self._mode = self.MODE_CONVERSATION
+        self.app_state.set_interaction_mode(self.MODE_CONVERSATION)
         if self.speech:
             self.speech.set_mode(SpeechRecognizer.MODE_CONVERSATION)
         self.speak_intent("I'm listening.")
@@ -194,6 +201,7 @@ class CommandRouter:
         """Exit conversation mode."""
         print("[CommandRouter] Exiting CONVERSATION MODE")
         self._mode = self.MODE_COMMAND
+        self.app_state.set_interaction_mode(self.MODE_COMMAND)
         if self.speech:
             self.speech.set_mode(SpeechRecognizer.MODE_COMMAND)
         self.speak_intent("Alright.")
@@ -204,12 +212,41 @@ class CommandRouter:
     
     def _handle_command_mode(self, text: str) -> bool:
         """Handle command in Command Mode."""
+        # 1. Check for pending suggestion response
+        if self._pending_suggestion_action:
+            if self._handle_suggestion_response(text):
+                return True
+
         parts = split_commands(text)
         
         if len(parts) > 1:
             return self._handle_compound(parts)
         
         return self._handle_single(text)
+
+    def _handle_suggestion_response(self, text: str) -> bool:
+        """Handle response to a pending suggestion."""
+        # Check for confirmation
+        if any(w in text for w in CONFIRMATIONS):
+            print("[CommandRouter] Suggestion confirmed.")
+            action = self._pending_suggestion_action
+            self._pending_suggestion_action = None
+            if action:
+                action()
+            return True
+        
+        # Check for rejection
+        if any(w in text for w in REJECTIONS):
+            print("[CommandRouter] Suggestion rejected.")
+            self._pending_suggestion_action = None
+            # Silence on rejection (as per design)
+            return True
+            
+        # If text is unrelated, we might want to clear pending or keep it?
+        # Design says: "Never follow up if ignored."
+        # If user says a command "Reload UI", we should probably execute it and drop the suggestion.
+        self._pending_suggestion_action = None
+        return False
     
     def _handle_compound(self, parts: List[str]) -> bool:
         """Handle compound command."""
@@ -319,7 +356,22 @@ class CommandRouter:
         """Get a relevant suggestion, or None if nothing useful."""
         # Very conservative - only offer if clearly useful
         
+        # 1. Theme Default Suggestion
+        # If user is on a theme different from preferred, offer to save it
+        current_theme = self.memory.get("last_theme")
+        preferred = self.persistent.preferred_theme
+        
+        if current_theme and current_theme != preferred:
+            def set_default():
+                self.persistent.set_immediate("preferred_theme", current_theme)
+                self.speak_intent(f"{current_theme.upper()} saved as default.")
+            
+            self._pending_suggestion_action = set_default
+            return f"Want me to keep {current_theme} as default?"
+        
+        # 2. Resume Workflow Suggestion
         if self.memory.get("last_command"):
+            # Only if NO pending action from above (though unlikely to overlap)
             return "Want to continue where we left off?"
         
         return None  # No suggestion
