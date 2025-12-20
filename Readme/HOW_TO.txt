@@ -122,8 +122,9 @@ Steel-main/
 |   |
 |   +-- ui/                       # Frontend QML interface
 |   |   +-- main.qml              # Main window, 3-zone layout orchestrator
+|   |   +-- FontTest.qml          # Font testing utility
 |   |   |
-|   |   +-- components/           # Reusable UI components
+|   |   +-- components/           # Reusable UI components (12 files)
 |   |   |   +-- CoreVisual.qml    # 5-layer AI orb (main visual element)
 |   |   |   +-- GlassTile.qml     # Light glass card component
 |   |   |   +-- BackgroundField.qml    # Ambient atmosphere background
@@ -137,22 +138,36 @@ Steel-main/
 |   |   |   +-- TabContainer.qml       # Tab navigation container
 |   |   |   +-- UIContext.qml          # UI context provider
 |   |   |
-|   |   +-- panels/               # Main content panels
+|   |   +-- panels/               # Main content panels (7 files)
 |   |   |   +-- AssistantPanel.qml    # Command center, voice interface
 |   |   |   +-- HomePanel.qml         # Home screen dashboard
 |   |   |   +-- SettingsPanel.qml     # Settings/configuration (30KB+)
 |   |   |   +-- MediaPanel.qml        # Media player controls
 |   |   |   +-- NavPanel.qml          # Navigation panel
 |   |   |   +-- VehiclePanel.qml      # Vehicle status display
+|   |   |   +-- qmldir                # QML module definition
 |   |   |
-|   |   +-- screens/              # Full screen views
-|   |   +-- Theme/                # Theme definitions and fonts
+|   |   +-- screens/              # Full screen views (4 files)
+|   |   |   +-- Dashboard.qml         # Dashboard screen
+|   |   |   +-- Media.qml             # Media screen
+|   |   |   +-- News.qml              # News screen
+|   |   |   +-- Security.qml          # Security screen
+|   |   |
+|   |   +-- Theme/                # Theme definitions (5 files)
+|   |       +-- Theme.qml             # Main theme configuration
+|   |       +-- FontRegistry.qml      # Font registration
+|   |       +-- Fonts.qml             # Font definitions
+|   |       +-- Typography.qml        # Typography settings
+|   |       +-- qmldir                # QML module definition
 |   |
 |   +-- themes/                   # Theme configurations
-|   |   +-- base/Theme.qml        # Base color tokens
 |   |   +-- audi/Theme.qml        # Audi-themed variant
+|   |   +-- bmw/Theme.qml         # BMW-themed variant
 |   |
-|   +-- motion/                   # Animation profiles
+|   +-- motion/                   # Animation profiles (2 files)
+|   |   +-- Calm.qml              # Calm motion profile
+|   |   +-- Dynamic.qml           # Dynamic motion profile
+|   |
 |   +-- assets/                   # Images, icons, wallpapers
 |
 +-- Readme/                       # Documentation folder
