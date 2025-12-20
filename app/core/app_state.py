@@ -1,3 +1,7 @@
+"""
+App State - Reactive State Management
+Steel OS v6.6
+"""
 from enum import Enum
 from PySide6.QtCore import QObject, Signal, Property, Slot, QTimer
 from .mic_monitor import MicMonitor

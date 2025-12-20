@@ -1,6 +1,6 @@
 """
 Speech Recognizer - Vosk-based offline speech recognition
-Steel OS v6.5
+Steel OS v6.6
 
 Features:
 - Completely offline, no data leaves your PC

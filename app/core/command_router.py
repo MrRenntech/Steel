@@ -1,6 +1,6 @@
 """
 Command Router - Voice Command System with Modes
-Steel OS v6.5
+Steel OS v6.6
 
 Modes:
 - COMMAND: Precise, grammar-based (default)
@@ -139,9 +139,9 @@ class CommandRouter:
         self._last_user_activity = time.time()
         
         if not text:
-            self.speak_intent("I didn't catch that.")
+            # Silence on empty input (prevents infinite loops of "I didn't catch that")
             return False
-        
+            
         text = text.lower().strip()
         
         # ─────────────────────────────────────────────────────────────

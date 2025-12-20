@@ -5694,6 +5694,7 @@ E:.
 |               pywin32_testall.cpython-314.pyc
 |               
 +---app
+|   |   logs.txt
 |   |   main.py
 |   |   
 |   +---assets
@@ -5729,16 +5730,53 @@ E:.
 |   |           
 |   +---core
 |   |   |   app_state.py
+|   |   |   command_router.py
+|   |   |   memory.py
 |   |   |   mic_monitor.py
+|   |   |   speech_recognizer.py
 |   |   |   steel_core.py
 |   |   |   system_bridge.py
+|   |   |   tts_engine.py
 |   |   |   
 |   |   \---__pycache__
 |   |           app_state.cpython-314.pyc
+|   |           command_router.cpython-314.pyc
+|   |           memory.cpython-314.pyc
 |   |           mic_monitor.cpython-314.pyc
+|   |           speech_recognizer.cpython-314.pyc
 |   |           steel_core.cpython-314.pyc
 |   |           system_bridge.cpython-314.pyc
+|   |           tts_engine.cpython-314.pyc
 |   |           
+|   +---models
+|   |   |   vosk-model.zip
+|   |   |   
+|   |   \---vosk-model-small-en-us-0.15
+|   |       |   README
+|   |       |   
+|   |       +---am
+|   |       |       final.mdl
+|   |       |       
+|   |       +---conf
+|   |       |       mfcc.conf
+|   |       |       model.conf
+|   |       |       
+|   |       +---graph
+|   |       |   |   disambig_tid.int
+|   |       |   |   Gr.fst
+|   |       |   |   HCLr.fst
+|   |       |   |   
+|   |       |   \---phones
+|   |       |           word_boundary.int
+|   |       |           
+|   |       \---ivector
+|   |               final.dubm
+|   |               final.ie
+|   |               final.mat
+|   |               global_cmvn.stats
+|   |               online_cmvn.conf
+|   |               splice.conf
+|   |               
 |   +---motion
 |   |       Calm.qml
 |   |       Dynamic.qml

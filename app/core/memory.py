@@ -1,6 +1,6 @@
 """
 Persistent Memory - Lightweight, non-creepy storage
-Steel OS v6.5
+Steel OS v6.6
 
 Philosophy:
 - Store only what reduces friction next time

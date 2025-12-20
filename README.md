@@ -102,6 +102,12 @@ Steel/
 ```
 
 ## 📝 Changelog
+- **v6.6** — Intelligence & Persistence
+  - **Interaction Modes**: "Command" (Grammar) vs "Conversation" (LLM)
+  - **Persistent Memory**: "Tier 1" memory stores preferences in `memory.json`
+  - **Assistant Initiative**: System offers to save settings (e.g., "Keep BMW as default?")
+  - **Visual Cues**: UI subtly changes reflection based on mode
+  
 - **v6.5** — 4-Phase Visual Overhaul
   - Locked 3-zone layout (Top/Main/Bottom)
   - Bottom context bar with mic level

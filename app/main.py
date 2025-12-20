@@ -1,3 +1,7 @@
+"""
+Steel OS v6.6
+Entry point for the application.
+"""
 import sys
 import os
 from PySide6.QtGui import QGuiApplication

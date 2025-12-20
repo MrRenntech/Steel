@@ -24,3 +24,68 @@ State changed to: IDLE
 State changed to: PRE_LISTEN
 State changed to: HOLDING
 State changed to: LISTENING
+State changed to: HOLDING
+Transcript: stop let's me
+Transcript: 
+State changed to: IDLE
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: HOLDING
+State changed to: LISTENING
+State changed to: HOLDING
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: I didn't catch that.
+[SPEAK] I didn't catch that.
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: LISTENING
+State changed to: HOLDING
+State changed to: LISTENING
+State changed to: HOLDING
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: I didn't catch that.
+[SPEAK] I didn't catch that.
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: HOLDING
+Transcript: I didn't catch that.
+[SPEAK] I didn't catch that.
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: I didn't catch that.
+[SPEAK] I didn't catch that.
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: Command not recognized.
+[SPEAK] Command not recognized.
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: LISTENING
+State changed to: HOLDING
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: let's to logs
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: Command not recognized.
+[SPEAK] Command not recognized.
+State changed to: RESPONDING
+State changed to: PROCESSING
