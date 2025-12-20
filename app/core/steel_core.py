@@ -8,8 +8,9 @@ class SteelCore(QObject):
         super().__init__()
         self.app_state = app_state
         
-        # Initialize command router
-        self.router = CommandRouter(app_state)
+        # Initialize command router (pass speech recognizer for mode switching)
+        speech = getattr(app_state, 'speech', None)
+        self.router = CommandRouter(app_state, speech_recognizer=speech)
         
         # Connect to state changes
         self.app_state.assistantStateChanged.connect(self.on_state_changed)

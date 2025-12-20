@@ -5,8 +5,8 @@ Steel OS v6.5
 Features:
 - Completely offline, no data leaves your PC
 - COMMAND MODE: Grammar-constrained for high accuracy
+- CONVERSATION MODE: Full language model for open dialogue
 - Real-time partial transcripts (subtitles)
-- Confidence filtering to prevent accidental triggers
 """
 
 import os
@@ -19,7 +19,7 @@ import sounddevice as sd
 from vosk import Model, KaldiRecognizer
 
 # ═══════════════════════════════════════════════════════════════════════════
-# COMMAND VOCABULARY - The only phrases we recognize
+# COMMAND VOCABULARY - Grammar phrases for Command Mode
 # ═══════════════════════════════════════════════════════════════════════════
 COMMAND_PHRASES = [
     # Theme commands
@@ -32,21 +32,29 @@ COMMAND_PHRASES = [
     "open logs",
     "repeat that",
     "help",
-    # Hard interrupts (these bypass everything)
+    # Hard interrupts
     "stop",
     "cancel",
     "never mind",
-    "shut up"
+    "shut up",
+    # Mode switching
+    "let's talk",
+    "talk to me",
+    "conversation mode",
 ]
 
-# Confidence threshold - below this, we ask user to repeat
-CONFIDENCE_THRESHOLD = 0.5
+# Conversation exit phrases (recognized in full model)
+CONVERSATION_EXIT = [
+    "that's enough",
+    "thats enough",
+    "stop talking",
+    "back to commands",
+    "command mode",
+]
+
 
 def normalize_transcript(text: str) -> str:
-    """
-    Normalize Vosk output to fix common misrecognitions.
-    BMW is notorious for being split as 'bm w'.
-    """
+    """Normalize Vosk output to fix common misrecognitions."""
     if not text:
         return ""
     
@@ -59,42 +67,37 @@ def normalize_transcript(text: str) -> str:
     text = text.replace("be and w", "bmw")
     text = text.replace("reload you i", "reload ui")
     text = text.replace("reload you eye", "reload ui")
+    text = text.replace("let us talk", "let's talk")
     
     return text
 
 
 class SpeechRecognizer:
-    """Offline speech recognition using Vosk with grammar constraints."""
+    """Offline speech recognition with Command and Conversation modes."""
+    
+    # Mode constants
+    MODE_COMMAND = "COMMAND"
+    MODE_CONVERSATION = "CONVERSATION"
     
     def __init__(self, 
                  on_partial: Optional[Callable[[str], None]] = None,
                  on_final: Optional[Callable[[str], None]] = None,
-                 on_low_confidence: Optional[Callable[[], None]] = None,
                  sample_rate: int = 16000,
                  command_phrases: List[str] = None):
-        """
-        Initialize the speech recognizer.
-        
-        Args:
-            on_partial: Callback for partial transcripts (live subtitles)
-            on_final: Callback for final transcript when speech ends
-            on_low_confidence: Callback when confidence is too low
-            sample_rate: Audio sample rate (16000 recommended for Vosk)
-            command_phrases: List of valid command phrases (grammar constraint)
-        """
+        """Initialize the speech recognizer."""
         self.on_partial = on_partial
         self.on_final = on_final
-        self.on_low_confidence = on_low_confidence
         self.sample_rate = sample_rate
         self.command_phrases = command_phrases or COMMAND_PHRASES
         
+        self._mode = self.MODE_COMMAND  # Start in command mode
         self._running = False
         self._audio_queue = queue.Queue()
         self._thread: Optional[threading.Thread] = None
         
-        # Build grammar JSON for Vosk
+        # Build grammar JSON for Command Mode
         self._grammar = json.dumps(self.command_phrases)
-        print(f"[SpeechRecognizer] Command grammar: {self._grammar}")
+        print(f"[SpeechRecognizer] Command grammar loaded ({len(self.command_phrases)} phrases)")
         
         # Load model
         model_path = os.path.join(
@@ -109,10 +112,36 @@ class SpeechRecognizer:
         print(f"[SpeechRecognizer] Loading model from: {model_path}")
         self._model = Model(model_path)
         
-        # Create grammar-constrained recognizer
+        # Create initial recognizer (Command Mode)
         self._recognizer = KaldiRecognizer(self._model, sample_rate, self._grammar)
         self._recognizer.SetWords(True)
-        print("[SpeechRecognizer] Model loaded with COMMAND MODE grammar")
+        print("[SpeechRecognizer] Ready in COMMAND MODE")
+    
+    @property
+    def mode(self) -> str:
+        """Current recognition mode."""
+        return self._mode
+    
+    def set_mode(self, mode: str):
+        """Switch between COMMAND and CONVERSATION modes."""
+        if mode not in [self.MODE_COMMAND, self.MODE_CONVERSATION]:
+            return
+        
+        if mode == self._mode:
+            return  # Already in this mode
+        
+        self._mode = mode
+        
+        # Recreate recognizer with appropriate settings
+        if mode == self.MODE_COMMAND:
+            self._recognizer = KaldiRecognizer(self._model, self.sample_rate, self._grammar)
+            print("[SpeechRecognizer] Switched to COMMAND MODE (grammar)")
+        else:
+            # Full language model for conversation
+            self._recognizer = KaldiRecognizer(self._model, self.sample_rate)
+            print("[SpeechRecognizer] Switched to CONVERSATION MODE (open)")
+        
+        self._recognizer.SetWords(True)
     
     def _audio_callback(self, indata, frames, time, status):
         """Callback for sounddevice audio stream."""
@@ -122,7 +151,7 @@ class SpeechRecognizer:
     
     def _recognition_thread(self):
         """Background thread for speech recognition."""
-        print("[SpeechRecognizer] Recognition thread started (COMMAND MODE)")
+        print(f"[SpeechRecognizer] Recognition thread started ({self._mode})")
         
         while self._running:
             try:
@@ -131,24 +160,18 @@ class SpeechRecognizer:
                 continue
             
             if self._recognizer.AcceptWaveform(data):
-                # Final result
                 result = json.loads(self._recognizer.Result())
                 raw_text = result.get("text", "")
-                
-                # Normalize the transcript
                 text = normalize_transcript(raw_text)
                 
                 if text:
-                    print(f"[SpeechRecognizer] Raw: '{raw_text}' -> Normalized: '{text}'")
-                    
+                    print(f"[SpeechRecognizer] [{self._mode}] '{raw_text}' -> '{text}'")
                     if self.on_final:
                         self.on_final(text)
             else:
-                # Partial result (live subtitles)
                 partial = json.loads(self._recognizer.PartialResult())
                 text = partial.get("partial", "")
                 if text and self.on_partial:
-                    # Also normalize partials for better display
                     self.on_partial(normalize_transcript(text))
         
         print("[SpeechRecognizer] Recognition thread stopped")
@@ -160,12 +183,15 @@ class SpeechRecognizer:
         
         self._running = True
         
-        # Clear any old data
+        # Clear queue
         while not self._audio_queue.empty():
             self._audio_queue.get()
         
-        # Reset recognizer with grammar
-        self._recognizer = KaldiRecognizer(self._model, self.sample_rate, self._grammar)
+        # Reset recognizer based on mode
+        if self._mode == self.MODE_COMMAND:
+            self._recognizer = KaldiRecognizer(self._model, self.sample_rate, self._grammar)
+        else:
+            self._recognizer = KaldiRecognizer(self._model, self.sample_rate)
         self._recognizer.SetWords(True)
         
         # Start recognition thread
@@ -182,7 +208,7 @@ class SpeechRecognizer:
         )
         self._stream.start()
         
-        print("[SpeechRecognizer] Started listening (COMMAND MODE)")
+        print(f"[SpeechRecognizer] Started listening ({self._mode})")
     
     def stop(self):
         """Stop listening."""
@@ -198,18 +224,17 @@ class SpeechRecognizer:
         if self._thread:
             self._thread.join(timeout=1.0)
         
-        # Get any final result
+        # Get final result
         result = json.loads(self._recognizer.FinalResult())
         raw_text = result.get("text", "")
         text = normalize_transcript(raw_text)
         
         if text and self.on_final:
-            print(f"[SpeechRecognizer] Final (on stop): '{raw_text}' -> '{text}'")
+            print(f"[SpeechRecognizer] Final: '{text}'")
             self.on_final(text)
         
         print("[SpeechRecognizer] Stopped listening")
     
     @property
     def is_running(self) -> bool:
-        """Check if recognizer is currently listening."""
         return self._running
