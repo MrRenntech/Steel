@@ -2,8 +2,18 @@
 State changed to: PRE_LISTEN
 State changed to: LISTENING
 State changed to: HOLDING
-Transcript: switch to aldi
-[SPEAK] I didn't understand that yet.
+Transcript: switch to audi
+[SPEAK] Switch To Audi.
+Theme switched to: audi
+State changed to: RESPONDING
+State changed to: PROCESSING
+State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: switch to bmw
+[SPEAK] Switch To Bmw.
+Theme switched to: bmw
 State changed to: RESPONDING
 State changed to: PROCESSING
 State changed to: IDLE
@@ -14,3 +24,9 @@ State changed to: HOLDING
 State changed to: RESPONDING
 State changed to: PROCESSING
 State changed to: IDLE
+State changed to: PRE_LISTEN
+State changed to: LISTENING
+State changed to: HOLDING
+State changed to: LISTENING
+State changed to: HOLDING
+Transcript: help
